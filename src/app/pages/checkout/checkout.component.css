@@ -1,0 +1,88 @@
+.checkout-card{
+  width:92%;
+  max-width:760px;
+  margin:18px auto;
+  padding:18px;
+  border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  background:#fff;
+}
+
+/* header */
+.card-header{ display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.card-header .lead-icon{
+  width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:12px;
+  color:#0b63c9;background:rgba(11,99,201,.12);border:1px solid rgba(11,99,201,.22);
+  box-shadow:0 1px 2px rgba(0,0,0,.06);
+  font-size:22px;font-variation-settings:'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 24;
+}
+.card-header h2{ margin:0;font-size:1.35rem;font-weight:800;color:#1f2937; }
+mat-divider{ margin-bottom:12px; }
+
+/* form */
+.form-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.form-grid .full{ grid-column:1 / -1; }
+mat-form-field{ width:100%; }
+
+/* mini summary */
+.mini-summary{
+  margin-top:14px;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  background:#fff;
+  overflow:hidden;
+}
+.mini-head{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;
+  font-weight:700;color:#0f172a;
+  background:#f8fafc;border-bottom:1px solid #e5e7eb;
+}
+.mini-head mat-icon{ font-variation-settings:'FILL' 1,'wght' 600; color:#0b63c9; }
+
+.mini-item{
+  display:flex;align-items:center;gap:10px;
+  padding:12px;background:#fff;border-bottom:1px solid #e5e7eb;
+}
+.mini-item:last-of-type{ border-bottom:1px solid #e5e7eb; }
+.mi-img{
+  width:52px;height:40px;object-fit:contain;background:#f3f4f6;
+  border:1px solid #e5e7eb;border-radius:8px;padding:4px;
+}
+.mi-meta{ flex:1 1 auto; min-width:0; }
+.mi-title{ font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.mi-sub{ font-size:.85rem;color:#6b7280; }
+.mi-qty{ width:40px;text-align:right;font-weight:700;color:#374151; }
+.mi-price,.mi-line{ width:110px;text-align:right;color:#111827; }
+
+/* footer lines — FORCE visible text */
+.mini-footer, .mini-total{
+  display:flex;align-items:center;
+  padding:10px 12px;
+  background:#fff;                 /* bela pozadina (nema ispranog efekta) */
+  border-top:1px solid #e5e7eb;
+  color:#111827;                   /* ⬅️ tamna boja teksta */
+}
+.mini-footer .label, .mini-total .label{ font-weight:700; color:#111827; }
+.mini-footer .count{ font-weight:800; color:#111827; }
+.mini-total .sum{ font-weight:800; color:#0f172a; }
+.mini-footer .spacer, .mini-total .spacer{ flex:1 1 auto; }
+
+/* summary/actions */
+.summary-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(0,0,0,.08);
+}
+.total{ font-size:1.05rem;color:#111827; }
+.total strong{ font-weight:800;color:#0f172a; }
+mat-card-actions{ padding:0; gap:8px; }
+.primary-btn mat-icon{ margin-right:6px; }
+
+/* responsive */
+@media (max-width:640px){
+  .form-grid{ grid-template-columns:1fr; }
+  .mi-line{ display:none; }
+  .summary-bar{ flex-direction:column; align-items:stretch; }
+  mat-card-actions{ justify-content:space-between; }
+}

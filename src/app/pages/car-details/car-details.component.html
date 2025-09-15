@@ -1,0 +1,94 @@
+<div class="center" *ngIf="loading">
+  <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+</div>
+
+
+<div class="center muted" *ngIf="!loading && !car">
+  Car not found.
+</div>
+
+
+<div class="details-wrap" *ngIf="!loading && car">
+
+  <div class="left">
+    <img
+      [src]="car.image || 'assets/images/placeholder-car.png'"
+      (error)="onImgError($event)"
+      [alt]="car.make + ' ' + car.model" />
+  </div>
+
+
+  <div class="right">
+    <div class="title-row">
+      <h1 class="title">{{ car.make }} {{ car.model }}</h1>
+      <button mat-stroked-button routerLink="/cars">
+        <mat-icon>arrow_back</mat-icon>
+        Back to list
+      </button>
+    </div>
+
+    <mat-divider></mat-divider>
+
+
+    <div class="tags">
+      <mat-chip-set>
+        <mat-chip *ngIf="car.year"><mat-icon>calendar_today</mat-icon> {{ car.year }}</mat-chip>
+        <mat-chip *ngIf="car.fuel"><mat-icon>local_gas_station</mat-icon> {{ car.fuel }}</mat-chip>
+        <mat-chip *ngIf="car.mileage != null"><mat-icon>speed</mat-icon> {{ car.mileage | number }} km</mat-chip>
+        <mat-chip *ngIf="car.color"><mat-icon>palette</mat-icon> {{ car.color }}</mat-chip>
+
+        <mat-chip *ngIf="car.bodyType"><mat-icon>directions_car_filled</mat-icon> {{ car.bodyType }}</mat-chip>
+      </mat-chip-set>
+    </div>
+
+
+    <div class="specs">
+      <div class="spec">
+        <mat-icon>calendar_today</mat-icon>
+        <span class="label">Year</span>
+        <span class="val">{{ car.year || '—' }}</span>
+      </div>
+
+      <div class="spec">
+        <mat-icon>local_gas_station</mat-icon>
+        <span class="label">Fuel</span>
+        <span class="val">{{ car.fuel || '—' }}</span>
+      </div>
+
+      <div class="spec">
+        <mat-icon>speed</mat-icon>
+        <span class="label">Mileage</span>
+        <span class="val">{{ car.mileage != null ? (car.mileage | number) + ' km' : '—' }}</span>
+      </div>
+
+      <div class="spec">
+        <mat-icon>palette</mat-icon>
+        <span class="label">Color</span>
+        <span class="val">{{ car.color || '—' }}</span>
+      </div>
+
+
+      <div class="spec">
+        <mat-icon>directions_car</mat-icon>
+        <span class="label">Body type</span>
+        <span class="val">{{ car.bodyType || '—' }}</span>
+      </div>
+
+      <div class="spec">
+        <mat-icon>euro</mat-icon>
+        <span class="label">Price</span>
+        <span class="val price">
+          {{ car.price != null ? (car.price | currency:'EUR':'symbol':'1.0-0') : 'On request' }}
+        </span>
+      </div>
+    </div>
+
+
+    <div class="actions">
+      <button mat-raised-button color="primary" class="reserve-btn" (click)="addToCart()">
+        <mat-icon>shopping_cart</mat-icon>
+        Reserve
+      </button>
+    </div>
+  </div>
+</div>

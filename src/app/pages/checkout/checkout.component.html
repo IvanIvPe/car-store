@@ -1,0 +1,84 @@
+<mat-card class="checkout-card">
+  <div class="card-header">
+    <mat-icon class="lead-icon">shopping_cart_checkout</mat-icon>
+    <h2>Checkout</h2>
+  </div>
+  <mat-divider></mat-divider>
+
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Full Name*</mat-label>
+      <input matInput type="text" [(ngModel)]="customerName" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Phone*</mat-label>
+      <input matInput type="tel" [(ngModel)]="phone" required />
+    </mat-form-field>
+
+    <mat-form-field class="full" appearance="outline">
+      <mat-label>Address*</mat-label>
+      <input matInput type="text" [(ngModel)]="address" required />
+    </mat-form-field>
+  </div>
+
+  <div class="mini-summary">
+    <div class="mini-head">
+      <mat-icon>inventory_2</mat-icon>
+      <span>Order summary</span>
+    </div>
+
+    <div class="mini-item" *ngFor="let it of cartItems">
+      <img
+        class="mi-img"
+        [src]="it.image || 'assets/images/placeholder-car.png'"
+        (error)="onImgError($event)"
+        [alt]="(it.make || it.brand || it.carMake || '') + ' ' + (it.model || it.carModel || it.name || 'Car')"
+      />
+
+      <div class="mi-meta">
+        <div class="mi-title">
+          {{ (it.make || it.brand || it.carMake || '') }}
+          {{ (it.model || it.carModel || it.name || 'Car') }}
+        </div>
+
+        <div class="mi-sub">
+          <ng-container *ngIf="it.year">{{ it.year }}</ng-container>
+          <ng-container *ngIf="it.year && (it.fuel || it.mileage != null)"> • </ng-container>
+          <ng-container *ngIf="it.fuel">{{ it.fuel }}</ng-container>
+          <ng-container *ngIf="(it.year || it.fuel) && it.mileage != null"> • </ng-container>
+          <ng-container *ngIf="it.mileage != null">{{ it.mileage | number }} km</ng-container>
+        </div>
+      </div>
+
+      <div class="mi-qty">×{{ it.quantity || 1 }}</div>
+      <div class="mi-price">{{ it.price | currency:'EUR':'symbol':'1.0-0' }}</div>
+      <div class="mi-line">{{ (it.price * (it.quantity || 1)) | currency:'EUR':'symbol':'1.0-0' }}</div>
+    </div>
+
+    <div class="mini-footer">
+      <span class="label">Items</span>
+      <span class="spacer"></span>
+      <span class="count">{{ cartItems.length }}</span>
+    </div>
+
+    <div class="mini-total">
+      <span class="label">Total</span>
+      <span class="spacer"></span>
+      <span class="sum">{{ totalPrice | currency:'EUR':'symbol':'1.0-0' }}</span>
+    </div>
+  </div>
+
+  <div class="summary-bar">
+    <div class="total">
+      Total: <strong>{{ totalPrice | currency:'EUR':'symbol':'1.0-0' }}</strong>
+    </div>
+    <mat-card-actions align="end">
+      <button mat-stroked-button color="warn" routerLink="/cart">Back to cart</button>
+      <button mat-flat-button color="primary" class="primary-btn" (click)="confirmPlaceOrder()">
+        <mat-icon>payments</mat-icon>
+        Place Order
+      </button>
+    </mat-card-actions>
+  </div>
+</mat-card>

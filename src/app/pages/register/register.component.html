@@ -1,0 +1,87 @@
+<mat-card class="register-card">
+  <div class="card-header">
+    <mat-icon>person_add</mat-icon>
+    <h2>Register</h2>
+  </div>
+  <mat-divider></mat-divider>
+
+  <form (ngSubmit)="register()" #form="ngForm" class="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Full Name</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="model"
+        name="model"
+        #nameCtrl="ngModel"
+        required
+        placeholder="e.g. Ana Petrović" />
+      <mat-error *ngIf="nameCtrl.invalid && nameCtrl.touched">
+        Full name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        #emailCtrl="ngModel"
+        required
+        email
+        placeholder="you@example.com" />
+      <mat-error *ngIf="emailCtrl.invalid && emailCtrl.touched">
+        Enter a valid email
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        [type]="hide ? 'password' : 'text'"
+        [(ngModel)]="password"
+        name="password"
+        #passCtrl="ngModel"
+        required
+        minlength="6"
+        placeholder="Min 6 characters" />
+      <button mat-icon-button matSuffix type="button" (click)="hide = !hide" [attr.aria-label]="'Toggle password visibility'">
+        <mat-icon>{{ hide ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="passCtrl.invalid && passCtrl.touched">
+        Password must be at least 6 characters
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Confirm Password</mat-label>
+      <input
+        matInput
+        [type]="hide2 ? 'password' : 'text'"
+        [(ngModel)]="confirmPassword"
+        name="confirmPassword"
+        #confCtrl="ngModel"
+        required />
+      <button mat-icon-button matSuffix type="button" (click)="hide2 = !hide2" [attr.aria-label]="'Toggle password visibility'">
+        <mat-icon>{{ hide2 ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="confCtrl.touched && password !== confirmPassword">
+        Passwords do not match
+      </mat-error>
+    </mat-form-field>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button mat-flat-button color="primary" class="submit" [disabled]="form.invalid || password !== confirmPassword">
+      Create Account
+    </button>
+
+    <p class="helper">
+      Already have an account?
+      <a routerLink="/login" class="link">Login</a>
+    </p>
+  </form>
+</mat-card>

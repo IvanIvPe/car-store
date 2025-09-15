@@ -1,0 +1,139 @@
+<div class="chip-row">
+  <mat-chip-listbox [(ngModel)]="selectedFuel" (ngModelChange)="quickFuel($event)">
+    <mat-chip-option [value]="">All</mat-chip-option>
+    <mat-chip-option *ngFor="let f of fuels" [value]="f">{{ f }}</mat-chip-option>
+  </mat-chip-listbox>
+</div>
+
+<div class="filters-bar">
+  <div class="filters-grid">
+
+    <mat-form-field appearance="fill" class="filter-pill">
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-label>Search (brand/model)</mat-label>
+      <input matInput [(ngModel)]="search" (ngModelChange)="filterChanged()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filter-pill">
+      <mat-icon matPrefix>local_gas_station</mat-icon>
+      <mat-label>Fuel</mat-label>
+      <mat-select [(ngModel)]="selectedFuel" (selectionChange)="filterChanged()">
+        <mat-option [value]="">All</mat-option>
+        <mat-option *ngFor="let fuel of fuels" [value]="fuel">{{ fuel }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filter-pill">
+      <mat-icon matPrefix>directions_car</mat-icon>
+      <mat-label>Body type</mat-label>
+      <mat-select [(ngModel)]="selectedBodyType" (selectionChange)="filterChanged()">
+        <mat-option [value]="">All</mat-option>
+        <mat-option *ngFor="let bt of bodyTypes" [value]="bt">{{ bt }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filter-pill">
+      <mat-icon matPrefix>euro</mat-icon>
+      <mat-label>Max price</mat-label>
+      <input matInput type="number" [(ngModel)]="maxPrice" (ngModelChange)="filterChanged()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filter-pill">
+      <mat-icon matPrefix>calendar_today</mat-icon>
+      <mat-label>Min year</mat-label>
+      <input matInput type="number" [(ngModel)]="minYear" (ngModelChange)="filterChanged()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filter-pill">
+      <mat-icon matPrefix>calendar_today</mat-icon>
+      <mat-label>Max year</mat-label>
+      <input matInput type="number" [(ngModel)]="maxYear" (ngModelChange)="filterChanged()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filter-pill">
+      <mat-icon matPrefix>speed</mat-icon>
+      <mat-label>Max mileage</mat-label>
+      <input matInput type="number" [(ngModel)]="maxMileage" (ngModelChange)="filterChanged()" />
+    </mat-form-field>
+
+
+    <mat-form-field appearance="fill" class="filter-pill" floatLabel="always">
+      <mat-icon matPrefix>sort</mat-icon>
+      <mat-label>Sort by</mat-label>
+      <mat-select [(ngModel)]="sortBy" (selectionChange)="applyAll()">
+        <mat-option value="yearDesc">Newest</mat-option>
+        <mat-option value="yearAsc">Oldest</mat-option>
+        <mat-option value="priceAsc">Price ↑</mat-option>
+        <mat-option value="priceDesc">Price ↓</mat-option>
+        <mat-option value="mileageAsc">Mileage ↑</mat-option>
+        <mat-option value="mileageDesc">Mileage ↓</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      mat-stroked-button
+      color="primary"
+      class="clear-filters-btn pretty"
+      (click)="clearFilters()">
+      <mat-icon>filter_alt_off</mat-icon>
+      Clear filters
+    </button>
+  </div>
+</div>
+
+<p class="meta">Total cars: {{ cars.length }} • Filtered: {{ filteredCars.length }}</p>
+
+<ng-template #noCars>
+  <div class="empty-state" aria-live="polite">
+    <mat-icon>search_off</mat-icon>
+    <h3>No results</h3>
+    <p>There are no cars matching the given filters.</p>
+    <button mat-stroked-button color="primary" class="empty-cta" (click)="clearFilters()">
+      <mat-icon>filter_alt_off</mat-icon>
+      Clear filters
+    </button>
+  </div>
+</ng-template>
+
+<div *ngIf="!loading && filteredCars.length > 0; else noCars" class="cars-container">
+  <mat-card *ngFor="let car of pageSlice; trackBy: trackByCar" class="car-card">
+    <div class="thumb">
+      <img
+        [src]="car.image || 'assets/images/placeholder-car.png'"
+        loading="lazy"
+        (error)="imgFallback($event)"
+        [alt]="car.make + ' ' + car.model" />
+    </div>
+
+    <mat-card-title>{{ car.make }} {{ car.model }}</mat-card-title>
+    <mat-card-subtitle>
+      {{ car.fuel || '—' }} •
+      {{ car.mileage != null ? (car.mileage | number) + ' km' : '—' }} •
+      {{ car.year || '—' }}
+    </mat-card-subtitle>
+
+    <div class="price-row" [class.missing]="car.price == null">
+      {{ car.price != null ? (car.price | currency:'EUR':'symbol':'1.0-0') : 'Price on request' }}
+    </div>
+
+    <mat-card-actions class="card-actions">
+      <button mat-raised-button color="primary" class="action-btn" (click)="addToCart(car)">
+        <mat-icon>shopping_cart</mat-icon>
+        Reserve
+      </button>
+      <button mat-raised-button color="primary" class="action-btn" (click)="goToDetails(car.carId)">
+        <mat-icon>info</mat-icon>
+        Details
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<mat-paginator
+  [length]="filteredCars.length"
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex"
+  [pageSizeOptions]="[8,12,16,24]"
+  [disabled]="loading || filteredCars.length === 0"
+  (page)="paginate($event)">
+</mat-paginator>

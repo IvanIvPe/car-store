@@ -1,0 +1,208 @@
+<section class="hero">
+  <div class="hero-overlay">
+    <h1>Find your next car</h1>
+    <p class="sub">Compare, filter and buy your next car in minutes.</p>
+
+
+    <form class="search-bar" (ngSubmit)="goSearch()">
+      <mat-form-field appearance="fill" class="pill">
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label>Search</mat-label>
+        <input matInput [(ngModel)]="form.q" name="q" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="pill">
+        <mat-icon matPrefix>category</mat-icon>
+        <mat-label>Body type</mat-label>
+        <mat-select [(ngModel)]="form.bodyType" name="bodyType">
+          <mat-option value="">Any</mat-option>
+          <mat-option *ngFor="let t of bodyTypes" [value]="t">{{ t }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="pill">
+        <mat-icon matPrefix>bolt</mat-icon>
+        <mat-label>Fuel</mat-label>
+        <mat-select [(ngModel)]="form.fuel" name="fuel">
+          <mat-option value="">Any</mat-option>
+          <mat-option *ngFor="let f of fuels" [value]="f">{{ f }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="pill">
+        <mat-icon matPrefix>euro</mat-icon>
+        <mat-label>Max price</mat-label>
+        <input matInput type="number" [(ngModel)]="form.maxPrice" name="maxPrice" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="pill">
+        <mat-icon matPrefix>calendar_today</mat-icon>
+        <mat-label>Min year</mat-label>
+        <input matInput type="number" [(ngModel)]="form.minYear" name="minYear" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="pill">
+        <mat-icon matPrefix>speed</mat-icon>
+        <mat-label>Max mileage</mat-label>
+        <input matInput type="number" [(ngModel)]="form.maxMileage" name="maxMileage" />
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" class="go" type="submit" aria-label="Search cars">
+        <mat-icon>search</mat-icon>
+        Search
+      </button>
+    </form>
+  </div>
+</section>
+
+<section class="highlights">
+  <div class="h-item">
+    <span class="h-icon"><mat-icon>payments</mat-icon></span>
+    <div class="h-text">
+      <h3>Great prices</h3>
+      <p>No hidden costs — what you see is what you pay.</p>
+    </div>
+  </div>
+  <div class="h-item">
+    <span class="h-icon"><mat-icon>inventory_2</mat-icon></span>
+    <div class="h-text">
+      <h3>Big selection</h3>
+      <p>From compact to luxury & electric.</p>
+    </div>
+  </div>
+  <div class="h-item">
+    <span class="h-icon"><mat-icon>verified</mat-icon></span>
+    <div class="h-text">
+      <h3>Trusted sellers</h3>
+      <p>Reviews and secure checkout.</p>
+    </div>
+  </div>
+  <div class="h-item">
+    <span class="h-icon"><mat-icon>support_agent</mat-icon></span>
+    <div class="h-text">
+      <h3>Quick support</h3>
+      <p>We’re here when you need us.</p>
+    </div>
+  </div>
+</section>
+
+<section class="categories">
+  <h2>Popular categories</h2>
+  <div class="cat-row">
+    <button
+      class="cat-card"
+      *ngFor="let c of categories"
+      (click)="openCategory(c)"
+      [attr.aria-label]="'View category ' + c.label">
+      <img [src]="c.img" (error)="imgFallback($event)" [alt]="c.label" loading="lazy" />
+      <span>{{ c.label }}</span>
+    </button>
+  </div>
+</section>
+
+<section class="featured">
+  <h2>Featured cars</h2>
+  <div class="grid">
+    <mat-card *ngFor="let car of featured" class="f-card">
+      <img
+        mat-card-image
+        [src]="car.image || 'assets/images/placeholder-car.png'"
+        (error)="imgFallback($event)"
+        [alt]="car.make + ' ' + car.model"
+        loading="lazy" />
+      <mat-card-title>{{ car.make }} {{ car.model }}</mat-card-title>
+      <mat-card-subtitle>
+        {{ car.fuel || '—' }} • {{ car.mileage | number }} km • {{ car.year }}
+      </mat-card-subtitle>
+      <mat-card-content>
+        <p class="price">{{ car.price | currency:'EUR':'symbol' }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="addToCart(car)">Reserve</button>
+        <button mat-button (click)="openDetails(car.carId)">Details</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</section>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-wrap">
+    <div class="footer-grid">
+
+      <div class="f-col">
+        <a class="f-brand" routerLink="/">
+          <mat-icon aria-hidden="true">directions_car</mat-icon>
+          <span>CarStore</span>
+        </a>
+        <p class="f-about">
+          Smart shopping for used and new cars. Compare, filter, and reserve — with no hidden costs.
+        </p>
+        <div class="f-social" aria-label="Social links">
+          <a href="#" aria-label="Visit us on Facebook"><mat-icon>facebook</mat-icon></a>
+          <a href="#" aria-label="Visit us on Instagram"><mat-icon>photo_camera</mat-icon></a>
+          <a href="#" aria-label="Visit us on X/Twitter"><mat-icon>alternate_email</mat-icon></a>
+          <a href="#" aria-label="Visit us on YouTube"><mat-icon>smart_display</mat-icon></a>
+        </div>
+      </div>
+
+      <nav class="f-col" aria-label="Quick links">
+        <h3 class="f-title">Links</h3>
+        <ul class="f-links">
+          <li><a routerLink="/about">About us</a></li>
+          <li><a routerLink="/contact">Contact</a></li>
+          <li><a routerLink="/cars">Car catalog</a></li>
+          <li><a routerLink="/profile/orders">My orders</a></li>
+          <li><a routerLink="/faq">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <nav class="f-col" aria-label="Legal">
+        <h3 class="f-title">Legal</h3>
+        <ul class="f-links">
+          <li><a routerLink="/terms">Terms of use</a></li>
+          <li><a routerLink="/privacy">Privacy policy</a></li>
+          <li><a routerLink="/cookies">Cookies</a></li>
+          <li><a routerLink="/returns">Returns & complaints</a></li>
+        </ul>
+      </nav>
+
+      <div class="f-col">
+        <h3 class="f-title">Newsletter</h3>
+        <p class="f-note">Discounts, new offers and tips once a week.</p>
+
+        <form class="f-newsletter" (ngSubmit)="subscribeNewsletter()" aria-label="Newsletter signup">
+          <mat-form-field appearance="fill" class="f-pill">
+            <mat-icon matPrefix>mail</mat-icon>
+            <mat-label>Email address</mat-label>
+            <input
+              matInput
+              type="email"
+              required
+              [(ngModel)]="newsletterEmail"
+              name="newsletterEmail"
+              aria-describedby="newsletter-help">
+          </mat-form-field>
+          <button mat-raised-button color="primary" class="f-go" type="submit" aria-label="Subscribe">
+            <mat-icon>send</mat-icon>
+            Subscribe
+          </button>
+        </form>
+        <small id="newsletter-help" class="f-help">You can unsubscribe at any time.</small>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="f-bottom">
+    <div class="f-bottom-wrap">
+      <span>© {{ currentYear || (today | date:'y') }} Ivan Pešić - 2021/240068</span>
+      <div class="f-pay">
+        <mat-icon aria-hidden="true">credit_card</mat-icon>
+        <mat-icon aria-hidden="true">payments</mat-icon>
+        <mat-icon aria-hidden="true">account_balance</mat-icon>
+      </div>
+    </div>
+  </div>
+</footer>
+
+

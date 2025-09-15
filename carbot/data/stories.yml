@@ -1,0 +1,118 @@
+version: "3.1"
+
+stories:
+- story: Greet and start car search form
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: car_search
+    - action: car_search_form
+    - active_loop: car_search_form
+    - active_loop: null
+    - action: utter_searching
+    - action: action_search_car
+
+
+- story: Quick car search with entities
+  steps:
+    - intent: car_search
+      entities:
+        - body_type: "SUV"
+        - fuel: "Diesel"
+        - max_price: 15000
+    - action: car_search_form
+    - active_loop: car_search_form
+    - active_loop: null
+    - action: utter_searching
+    - action: action_search_car
+
+
+- story: Search by make model and constraints
+  steps:
+    - intent: car_search
+      entities:
+        - make: "Audi"
+        - model: "A4"
+        - min_year: 2016
+        - max_mileage: 120000
+    - action: car_search_form
+    - active_loop: car_search_form
+    - active_loop: null
+    - action: utter_searching
+    - action: action_search_car
+
+- story: Reserve by car_id
+  steps:
+    - slot_was_set:
+        - user_email: "test@example.com"
+    - intent: reserve_car
+      entities:
+        - car_id: 123
+    - action: action_reserve_car
+
+
+- story: Reserve by make and model
+  steps:
+    - slot_was_set:
+        - user_email: "test@example.com"
+    - intent: reserve_car
+      entities:
+        - make: "Volkswagen"
+        - model: "Golf"
+    - action: action_reserve_car
+
+
+- story: Add and show cart
+  steps:
+    - intent: add_to_cart
+      entities:
+        - car_id: 5
+    - action: action_add_to_cart
+    - intent: show_cart
+    - action: action_show_cart
+
+
+- story: Cancel reservation by id
+  steps:
+    - slot_was_set:
+        - logged_in: true
+        - user_email: "test@example.com"
+    - intent: cancel_reservation
+      entities:
+        - car_id: 123
+    - action: action_cancel_reservation
+
+
+- story: Cancel reservation by make model
+  steps:
+    - slot_was_set:
+        - logged_in: true
+        - user_email: "test@example.com"
+    - intent: cancel_reservation
+      entities:
+        - make: "Audi"
+        - model: "A4"
+    - action: action_cancel_reservation
+
+
+- story: Reset filters usage
+  steps:
+    - intent: reset_filters
+    - action: action_reset_filters
+
+
+- story: FAQ hours
+  steps:
+    - intent: faq_hours
+    - action: utter_faq_hours
+
+- story: FAQ contact
+  steps:
+    - intent: faq_contact
+    - action: utter_faq_contact
+
+
+- story: NLU fallback route
+  steps:
+    - intent: nlu_fallback
+    - action: action_default_fallback

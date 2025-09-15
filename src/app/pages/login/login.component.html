@@ -1,0 +1,59 @@
+<mat-card class="login-card">
+  <div class="card-header">
+    <mat-icon>login</mat-icon>
+    <h2>Login</h2>
+  </div>
+  <mat-divider></mat-divider>
+
+  <form (ngSubmit)="login()" #form="ngForm" class="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        #emailCtrl="ngModel"
+        required
+        email
+        placeholder="you@example.com" />
+      <mat-error *ngIf="emailCtrl.invalid && emailCtrl.touched">
+        Enter a valid email
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        [type]="hide ? 'password' : 'text'"
+        [(ngModel)]="password"
+        name="password"
+        #passCtrl="ngModel"
+        required
+        minlength="6" />
+      <button mat-icon-button matSuffix type="button" (click)="hide = !hide" [attr.aria-label]="'Toggle password visibility'">
+        <mat-icon>{{ hide ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="passCtrl.invalid && passCtrl.touched">
+        Minimum 6 characters
+      </mat-error>
+    </mat-form-field>
+
+    <div class="row-between">
+      <mat-checkbox [(ngModel)]="remember" name="remember">Remember me</mat-checkbox>
+      <a routerLink="/forgot-password" class="link">Forgot password?</a>
+    </div>
+
+    <button mat-flat-button color="primary" class="submit" [disabled]="form.invalid">
+      Login
+    </button>
+  </form>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <p class="helper">
+    Don't have an account?
+    <a routerLink="/register" class="link">Create one</a>
+  </p>
+</mat-card>

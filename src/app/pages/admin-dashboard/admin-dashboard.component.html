@@ -1,0 +1,194 @@
+<div class="admin-wrap">
+
+  <!-- IMAGE TOOLS -->
+  <mat-card class="form-card tools-card">
+    <div class="card-header">
+      <mat-icon>image_search</mat-icon>
+      <h2>Image tools</h2>
+      <span class="spacer"></span>
+
+      <button mat-stroked-button color="primary"
+              (click)="fillMissingImages()"
+              [disabled]="filling">
+        <mat-icon>auto_fix_high</mat-icon>
+        Fill missing images
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+
+    <!-- Kontrastniji processing baner -->
+    <div *ngIf="filling" class="progress-banner" aria-live="polite">
+      <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+      <span class="text">Processing… Please wait</span>
+    </div>
+
+    <div class="stats" *ngIf="!filling && lastFill">
+      <span class="chip">Processed: <b>{{ lastFill.scanned }}</b></span>
+      <span class="chip">Updated: <b>{{ lastFill.updated }}</b></span>
+    </div>
+  </mat-card>
+
+  <!-- FORM CARD -->
+  <mat-card class="form-card" #formTop>
+    <div class="card-header">
+      <mat-icon>build_circle</mat-icon>
+      <h2>{{ isEditing ? 'Edit Car' : 'Add Car' }}</h2>
+    </div>
+    <mat-divider></mat-divider>
+
+    <div class="form-grid">
+      <mat-form-field appearance="fill">
+        <mat-label>Brand</mat-label>
+        <input matInput [(ngModel)]="car.make" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Model</mat-label>
+        <input matInput [(ngModel)]="car.model" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Year</mat-label>
+        <input matInput type="number" [(ngModel)]="car.year" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Fuel</mat-label>
+        <mat-select [(ngModel)]="car.fuel">
+          <mat-option value="">(not set)</mat-option>
+          <mat-option value="Petrol">Petrol</mat-option>
+          <mat-option value="Diesel">Diesel</mat-option>
+          <mat-option value="Hybrid">Hybrid</mat-option>
+          <mat-option value="Electric">Electric</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+      <mat-form-field appearance="fill">
+        <mat-label>Color</mat-label>
+        <mat-select [(ngModel)]="car.color">
+          <mat-option value="">(not set)</mat-option>
+          <mat-option *ngFor="let col of colors" [value]="col">{{ col }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+      <mat-form-field appearance="fill">
+        <mat-label>Body type</mat-label>
+        <mat-select [(ngModel)]="car.bodyType">
+          <mat-option value="">(not set)</mat-option>
+          <mat-option *ngFor="let t of bodyTypes" [value]="t">{{ t }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Mileage (km)</mat-label>
+        <input matInput type="number" [(ngModel)]="car.mileage">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Price (€)</mat-label>
+        <input matInput type="number" [(ngModel)]="car.price">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full">
+        <mat-label>Image URL (optional)</mat-label>
+        <input matInput [(ngModel)]="car.image" placeholder="Optional">
+      </mat-form-field>
+
+
+      <div class="preview full">
+        <div class="preview-inner">
+          <img
+            [src]="car.image || 'assets/images/placeholder-car.png'"
+            (error)="onImgError($event)"
+            alt="Preview">
+        </div>
+        <span class="preview-hint">
+          <mat-icon>image</mat-icon>
+          Image preview
+        </span>
+      </div>
+    </div>
+
+    <mat-card-actions align="end">
+      <button mat-stroked-button color="primary" (click)="isEditing ? updateCar() : addCar()">
+        <mat-icon>{{ isEditing ? 'save' : 'add' }}</mat-icon>
+        {{ isEditing ? 'Save Changes' : 'Add Car' }}
+      </button>
+      <button mat-button *ngIf="isEditing" (click)="resetForm()">Cancel</button>
+    </mat-card-actions>
+  </mat-card>
+
+
+  <div class="list-header">
+    <div class="title">
+      <mat-icon class="lead">directions_car</mat-icon>
+      <h3>Cars</h3>
+      <span class="count-chip" *ngIf="filteredCars.length">{{ filteredCars.length }}</span>
+    </div>
+
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search by name</mat-label>
+      <input
+        matInput
+        [(ngModel)]="query"
+        (ngModelChange)="onQueryChange($event)"
+        placeholder="e.g. Audi A4"
+      />
+
+      <span matSuffix class="suffix-actions">
+        <button mat-icon-button type="button" *ngIf="query" (click)="clearQuery()" aria-label="Clear">
+          <mat-icon>close</mat-icon>
+        </button>
+        <button mat-icon-button type="button" disabled aria-label="Search">
+          <mat-icon>search</mat-icon>
+        </button>
+      </span>
+    </mat-form-field>
+  </div>
+
+  <div class="cards-grid">
+    <mat-card class="car-card" *ngFor="let c of filteredCars; trackBy: trackById">
+      <div class="thumb-wrap">
+        <img
+          [src]="c.image || 'assets/images/placeholder-car.png'"
+          (error)="onImgError($event)"
+          [alt]="c.make + ' ' + c.model">
+      </div>
+
+      <div class="meta">
+        <div class="title-line">{{ c.make }} {{ c.model }}</div>
+        <div class="sub-line">
+          {{ c.year || '—' }} • {{ c.fuel || '—' }} • {{ c.bodyType || '—' }} • {{ c.color || '—' }} •
+          {{ c.mileage | number }} km
+        </div>
+        <div class="price-line">{{ c.price | currency:'EUR':'symbol' }}</div>
+      </div>
+
+      <div class="row-actions">
+        <button mat-stroked-button color="primary"
+                (click)="refreshImage(c)"
+                [disabled]="refreshingId === c.carId">
+          <mat-icon *ngIf="refreshingId !== c.carId">refresh</mat-icon>
+          <mat-progress-spinner *ngIf="refreshingId === c.carId"
+                                diameter="20"
+                                mode="indeterminate"></mat-progress-spinner>
+          <span *ngIf="refreshingId !== c.carId">Refresh image</span>
+        </button>
+
+        <span class="spacer"></span>
+
+        <button mat-stroked-button color="primary" (click)="editCar(c)">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-stroked-button color="warn" (click)="deleteCar(c.carId)">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </div>
+    </mat-card>
+  </div>
+
+</div>

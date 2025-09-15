@@ -1,0 +1,185 @@
+.profile-wrapper{
+  display:grid;
+  grid-template-columns: repeat(12, minmax(0,1fr));
+  grid-template-areas:
+    "profile  profile  profile  profile  profile  profile  orders orders orders orders orders orders"
+    "password password password password password password orders orders orders orders orders orders";
+  gap:16px;
+  max-width:1200px;
+  margin:24px auto;
+}
+
+.profile-card.profile  { grid-area: profile;  }
+.profile-card.password { grid-area: password; }
+.profile-card.orders,
+.profile-card.orders-card{ grid-area: orders; }
+
+@media (max-width: 1200px){
+  .profile-wrapper{
+    grid-template-columns: repeat(12, minmax(0,1fr));
+    grid-template-areas:
+      "profile  profile  profile  profile  profile  profile  password password password password password password"
+      "orders   orders   orders   orders   orders   orders   orders   orders   orders   orders   orders   orders";
+  }
+}
+
+@media (max-width: 980px){
+  .profile-wrapper{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "profile"
+      "password"
+      "orders";
+  }
+}
+
+.profile-card.profile,
+.profile-card.password{ min-height: 460px; }
+
+.profile-card{
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #dfe3f0;
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+}
+
+.card-header{
+  display:flex; align-items:center; gap:10px;
+}
+.card-header mat-icon{
+  color:#1f3b8f;
+  background:#e9f0ff;
+  border:1px solid #cbd8ff;
+  border-radius:10px;
+  padding:6px;
+}
+.card-header h2{
+  margin:0;
+  font-size:1.15rem;
+  font-weight:700;
+  letter-spacing:.2px;
+  color:#1a1f36;
+}
+
+.spacer{ flex:1; }
+mat-divider{ margin-bottom:8px; border-top-color:#d7d9e3 !important; }
+mat-form-field{ width:100%; }
+mat-card-actions{ padding-top:8px; }
+
+.profile-card.orders,
+.profile-card.orders-card{
+  max-height: 560px;
+  overflow: auto;
+  position: relative;
+}
+.profile-card.orders .card-header,
+.profile-card.orders-card .card-header{
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+  padding-bottom: 6px;
+}
+
+.orders{ display:grid; gap:12px; }
+
+.order-card{
+  background:#fff;
+  border:1px solid #dfe3f0;
+  border-radius:12px;
+  padding:12px 14px;
+  color:#1f2330;
+}
+.order-card *{ color:#1f2330; }
+
+.order-head{
+  display:grid;
+  grid-template-columns: 120px 1fr 160px;
+  gap:8px;
+  align-items:center;
+  margin-bottom:8px;
+}
+.order-head .oid{
+  font-weight:600;
+  background:#e9f0ff;
+  color:#203a8f;
+  border-radius:999px;
+  padding:4px 10px;
+  display:inline-block;
+}
+.order-head .date{ color:#4a5568; }
+.order-head .total{ text-align:right; font-size:1rem; }
+.order-head .total strong{ color:#1a1f36; }
+
+.items-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin-top:6px;
+  border:1px solid #e6e8f0;
+  border-radius:8px;
+  overflow:hidden;
+}
+.items-table thead th{
+  background:#f2f5ff;
+  color:#1a1f36;
+  font-weight:600;
+  padding:8px 10px;
+  text-align:left;
+  border-bottom:1px solid #e6e8f0;
+}
+.items-table td{
+  padding:8px 10px;
+  color:#1f2330;
+  border-bottom:1px solid #f0f1f6;
+}
+.items-table tbody tr:nth-child(even){ background:#f7f9ff; }
+.items-table tbody tr:hover{ background:#eef4ff; }
+
+.loading{ display:flex; justify-content:center; padding:16px; }
+.muted{ color:#5c6370; }
+.error{ color:#d32f2f; }
+
+.order-card, .order-card *{
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+:host ::ng-deep .mat-mdc-form-field.success .mdc-notched-outline__leading,
+:host ::ng-deep .mat-mdc-form-field.success .mdc-notched-outline__trailing,
+:host ::ng-deep .mat-mdc-form-field.success .mdc-notched-outline__notch {
+  border-color: #22c55e !important;
+}
+:host ::ng-deep .mat-mdc-form-field.success .mdc-floating-label {
+  color: #16a34a !important;
+}
+:host ::ng-deep .mat-mdc-form-field.success .mat-mdc-text-field-wrapper {
+  box-shadow: 0 0 0 2px rgba(34,197,94,.18);
+  border-radius: 12px;
+}
+
+.rating-col, .rating-cell { text-align: right; }
+.stars { display: inline-flex; gap: 2px; vertical-align: middle; }
+.star-btn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+}
+.stars mat-icon {
+  font-variation-settings: 'FILL' 0, 'wght' 400;
+  color: #cbd5e1;
+  transition: transform .08s ease, color .12s ease;
+}
+.stars mat-icon.filled {
+  color: #f59e0b;
+  font-variation-settings: 'FILL' 1, 'wght' 700;
+}
+.star-btn:hover mat-icon { transform: scale(1.08); }
+.star-btn:focus-visible { outline: 2px solid #93c5fd; border-radius: 4px; }
+

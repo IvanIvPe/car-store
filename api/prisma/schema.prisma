@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/**
+ * ---- ENUMS ----
+ */
+enum FuelType {
+  Petrol
+  Diesel
+  Hybrid
+  Electric
+}
+
+enum BodyType {
+  Sedan
+  Hatchback
+  SUV
+  Coupe
+  Convertible
+  Wagon
+  Van
+  Pickup
+  Crossover
+  Minivan
+  Other
+}
+
+/**
+ * ---- MODELS ----
+ */
+model Car {
+  carId    Int       @id @default(autoincrement())
+  make     String
+  model    String
+  year     Int
+  price    Int
+  color    String?
+  mileage  Int
+  fuel     String
+  bodyType BodyType?
+  image    String?
+
+  orderItems OrderItem[]
+
+  // Back-relacija ka CartItem sa imenom relacije "CarCartItems"
+  cartItems CartItem[] @relation("CarCartItems")
+
+  @@index([bodyType, fuel])
+  @@index([year])
+  @@index([price])
+  @@index([mileage])
+  @@map("Car")
+}
+
+model User {
+  userId       Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String
+  fullName     String?
+  role         String    @default("USER")
+  phone        String?   @db.VarChar(32)
+  address      String?   @db.VarChar(255)
+  favoriteFuel FuelType?
+  updatedAt    DateTime  @updatedAt
+
+  orders Order[]
+
+  // Back-relacija ka Cart sa imenom relacije "UserCarts"
+  carts Cart[] @relation("UserCarts")
+
+  @@map("User")
+}
+
+model Order {
+  orderId   Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  fullName String
+  email    String?
+  phone    String?
+  address  String?
+  total    Int
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [userId])
+
+  rating        Int?      @db.TinyInt
+  ratingComment String?   @db.VarChar(500)
+  ratedAt       DateTime?
+
+  items OrderItem[]
+
+  @@index([userId])
+  @@map("Order")
+}
+
+model OrderItem {
+  orderItemId Int @id @default(autoincrement())
+  orderId     Int
+  carId       Int
+  price       Int
+  quantity    Int @default(1)
+
+  order Order @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  car   Car   @relation(fields: [carId], references: [carId])
+
+  @@index([orderId])
+  @@index([carId])
+  @@map("OrderItem")
+}
+
+/// === CART (server-side korpa) ===
+model Cart {
+  cartId Int @id @default(autoincrement())
+
+  // Ako je korisnik ulogovan:
+  userId Int?
+  user   User? @relation("UserCarts", fields: [userId], references: [userId])
+
+  // Ako nije ulogovan → identitet iz kolačića/hedera
+  sessionId String? @unique
+
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([sessionId])
+  @@map("Cart")
+}
+
+model CartItem {
+  cartItemId Int  @id @default(autoincrement())
+  cartId     Int
+  cart       Cart @relation(fields: [cartId], references: [cartId], onDelete: Cascade)
+
+  carId Int
+  // Usklađeno ime relacije sa Car.cartItems
+  car   Car @relation("CarCartItems", fields: [carId], references: [carId])
+
+  price    Int
+  quantity Int      @default(1)
+  addedAt  DateTime @default(now())
+
+  @@unique([cartId, carId])
+  @@index([carId])
+  @@index([cartId])
+  @@map("CartItem")
+}

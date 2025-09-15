@@ -1,0 +1,79 @@
+<button
+  class="chat-toggle"
+  (click)="toggleChat()"
+  [attr.data-pos]="position"
+  aria-label="Open chat">
+  💬
+</button>
+
+<div
+  class="chat-window"
+  #chatWindow
+  *ngIf="isOpen"
+  [attr.data-pos]="position"
+  role="dialog"
+  aria-label="Chat with CarBot"
+  aria-modal="false">
+
+  <div class="resize-handle n"  *ngIf="isFloating" (mousedown)="startResize($event, 'n')"  (touchstart)="startResize($event, 'n')"></div>
+  <div class="resize-handle e"  *ngIf="isFloating" (mousedown)="startResize($event, 'e')"  (touchstart)="startResize($event, 'e')"></div>
+  <div class="resize-handle s"  *ngIf="isFloating" (mousedown)="startResize($event, 's')"  (touchstart)="startResize($event, 's')"></div>
+  <div class="resize-handle w"  *ngIf="isFloating" (mousedown)="startResize($event, 'w')"  (touchstart)="startResize($event, 'w')"></div>
+  <div class="resize-handle ne" *ngIf="isFloating" (mousedown)="startResize($event, 'ne')" (touchstart)="startResize($event, 'ne')"></div>
+  <div class="resize-handle nw" *ngIf="isFloating" (mousedown)="startResize($event, 'nw')" (touchstart)="startResize($event, 'nw')"></div>
+  <div class="resize-handle se" *ngIf="isFloating" (mousedown)="startResize($event, 'se')" (touchstart)="startResize($event, 'se')"></div>
+  <div class="resize-handle sw" *ngIf="isFloating" (mousedown)="startResize($event, 'sw')" (touchstart)="startResize($event, 'sw')"></div>
+
+  <div class="chat-header"
+       (mousedown)="startDrag($event)"
+       (touchstart)="startDrag($event)"
+       [class.dragging]="dragging">
+    <div class="brand">
+      <span class="logo">🚗</span>
+      <span class="title">CarBot</span>
+      <span class="subtitle">Find · Reserve · Track</span>
+    </div>
+    <div class="chat-header-buttons">
+
+      <button (click)="clearChat()" class="icon-btn" aria-label="Clear chat" title="Clear chat">🗑️</button>
+      <button (click)="toggleChat()" class="icon-btn" aria-label="Close" title="Close">✖️</button>
+    </div>
+  </div>
+
+  <div class="messages" #chatBody role="log" aria-live="polite" aria-relevant="additions">
+    <div *ngFor="let msg of messages" class="msg" [ngClass]="msg.sender">
+      <div class="avatar" aria-hidden="true">{{ msg.sender === 'user' ? '🧑' : '🤖' }}</div>
+      <div class="bubble">
+        <div class="meta">
+          <span class="sender">{{ msg.sender === 'user' ? 'You' : 'CarBot' }}</span>
+          <span class="time">{{ msg.time | date:'shortTime' }}</span>
+        </div>
+        <div class="content" *ngIf="msg.text && !msg.html" [textContent]="msg.text"></div>
+        <div class="content" *ngIf="msg.html" [innerHTML]="msg.html"></div>
+        <img *ngIf="msg.image" [src]="msg.image" alt="" class="inline-image" loading="lazy" />
+      </div>
+    </div>
+
+    <div *ngIf="isTyping" class="msg bot typing">
+      <div class="avatar" aria-hidden="true">🤖</div>
+      <div class="bubble">
+        <span class="dots"><i></i><i></i><i></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-replies" *ngIf="quickReplies.length">
+    <button *ngFor="let q of quickReplies" (click)="sendQuick(q)">{{ q }}</button>
+  </div>
+
+  <div class="input-area">
+    <textarea
+      [(ngModel)]="userMessage"
+      (keydown)="onKeyDown($event)"
+      placeholder="Send your message… (Enter to send)"
+      rows="1"
+      [disabled]="pending"
+      aria-label="Type a message"></textarea>
+    <button (click)="sendMessage()" [disabled]="pending || !userMessage.trim()" aria-label="Send">📤</button>
+  </div>
+</div>

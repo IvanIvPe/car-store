@@ -1,0 +1,51 @@
+.login-card{
+  width: 92%;
+  max-width: 420px;
+  margin: 48px auto;
+  padding: 18px 18px 12px;
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.08);
+  background: #fff;
+}
+
+.card-header{
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:6px;
+}
+.card-header mat-icon{
+  padding:6px; border-radius:10px; background:rgba(0,0,0,.06);
+}
+.card-header h2{
+  margin:0; font-size:1.35rem; font-weight:800; color:#1f2937;
+}
+
+.form{
+  display:flex; flex-direction:column; gap:12px;
+  margin-top:8px;
+}
+
+.row-between{
+  display:flex; justify-content:space-between; align-items:center;
+}
+
+.submit{
+  width:100%;
+  margin-top:4px;
+}
+
+.error{
+  color:#b91c1c;
+  margin:10px 0 0;
+  text-align:center;
+}
+
+.helper{
+  text-align:center;
+  margin:12px 0 2px;
+  color:#374151;
+}
+
+.link{
+  color:#1565c0; text-decoration:none;
+}
+.link:hover{ text-decoration:underline; }

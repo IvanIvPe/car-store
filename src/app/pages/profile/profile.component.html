@@ -1,0 +1,154 @@
+<div class="profile-wrapper">
+  <mat-card class="profile-card profile">
+    <div class="card-header">
+      <mat-icon>person</mat-icon>
+      <h2>My Profile</h2>
+    </div>
+    <mat-divider></mat-divider>
+
+    <div *ngIf="user">
+      <mat-form-field appearance="outline">
+        <mat-label>Full Name*</mat-label>
+        <input matInput [(ngModel)]="user.model" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="user.email" type="email" disabled>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Phone*</mat-label>
+        <input matInput [(ngModel)]="user.phone" type="tel" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Address*</mat-label>
+        <input matInput [(ngModel)]="user.address" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Favorite Fuel for Cars</mat-label>
+        <mat-select [(ngModel)]="user.favoriteFuel">
+          <mat-option [value]="null">(not set)</mat-option>
+          <mat-option *ngFor="let fuel of allFuelTypes" [value]="fuel">{{ fuel }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" (click)="saveChanges()">
+        <mat-icon>save</mat-icon>
+        Save Changes
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <form class="profile-card password" #pwdForm="ngForm" (ngSubmit)="changePassword(pwdForm)" novalidate>
+    <div class="card-header">
+      <mat-icon>lock</mat-icon>
+      <h2>Change Password</h2>
+    </div>
+    <mat-divider></mat-divider>
+
+    <mat-form-field appearance="outline" [class.success]="pwdSuccess">
+      <mat-label>Old Password*</mat-label>
+      <input matInput type="password" name="oldPassword" [(ngModel)]="oldPassword" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" [class.success]="pwdSuccess">
+      <mat-label>New Password*</mat-label>
+      <input matInput type="password" name="newPassword" [(ngModel)]="newPassword" required minlength="6">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" [class.success]="pwdSuccess">
+      <mat-label>Confirm New Password*</mat-label>
+      <input matInput type="password" name="confirmPassword" [(ngModel)]="confirmPassword" required>
+    </mat-form-field>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button color="accent" type="submit">
+        <mat-icon>sync_lock</mat-icon>
+        Change Password
+      </button>
+    </mat-card-actions>
+  </form>
+
+  <mat-card class="profile-card orders-card orders">
+    <div class="card-header">
+      <mat-icon>receipt_long</mat-icon>
+      <h2>My Orders</h2>
+      <span class="spacer"></span>
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
+        (click)="loadMyOrders()"
+        [disabled]="ordersLoading"
+        [attr.aria-label]="'Refresh my orders'">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+
+    <div *ngIf="ordersLoading" class="loading">
+      <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+    </div>
+
+    <p *ngIf="!ordersLoading && ordersError" class="error">
+      {{ ordersError }}
+    </p>
+
+    <p *ngIf="!ordersLoading && !ordersError && orders.length === 0" class="muted">
+      No orders yet.
+    </p>
+
+    <div *ngIf="!ordersLoading && !ordersError && orders.length > 0" class="orders">
+      <mat-card class="order-card" *ngFor="let o of orders">
+        <div class="order-head">
+          <div class="oid">#{{ o.orderId }}</div>
+          <div class="date">{{ o.createdAt | date:'medium' }}</div>
+          <div class="total"><strong>{{ o.total | currency:'EUR':'symbol' }}</strong></div>
+        </div>
+
+        <div class="order-rating">
+          <span class="rating-label">Your rating:</span>
+          <div class="stars" role="radiogroup" [attr.aria-label]="'Rate order #' + o.orderId">
+            <button
+              *ngFor="let i of [1,2,3,4,5]"
+              type="button"
+              class="star-btn"
+              [attr.aria-checked]="getOrderRating(o) === i"
+              (click)="onRate(o.orderId, i)"
+              [attr.aria-label]="'Rate ' + i + ' stars'">
+              <mat-icon [class.filled]="getOrderRating(o) >= i">
+                {{ getOrderRating(o) >= i ? 'star' : 'star_border' }}
+              </mat-icon>
+            </button>
+          </div>
+          <span class="rated-at" *ngIf="o.ratedAt">&nbsp;• {{ o.ratedAt | date:'short' }}</span>
+        </div>
+
+        <table class="items-table" *ngIf="o.items?.length">
+          <thead>
+            <tr>
+              <th>Car ID</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Line Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let it of o.items">
+              <td>{{ it.carId }}</td>
+              <td>{{ it.price | currency:'EUR':'symbol' }}</td>
+              <td>{{ it.quantity }}</td>
+              <td>{{ it.price * it.quantity | currency:'EUR':'symbol' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card>
+    </div>
+  </mat-card>
+</div>

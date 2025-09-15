@@ -1,0 +1,72 @@
+<mat-toolbar color="primary" class="topbar">
+
+  <a class="brand" routerLink="/" (click)="mobileOpen=false" aria-label="Home">
+    <mat-icon>directions_car</mat-icon>
+    <span class="brand-text">Car Store</span>
+  </a>
+
+  <span class="spacer"></span>
+
+  <nav class="nav-links" [class.open]="mobileOpen" aria-label="Main navigation">
+    <a mat-button routerLink="/" [routerLinkActiveOptions]="{ exact: true }"
+       routerLinkActive="active-link" (click)="mobileOpen=false">
+      <mat-icon class="nav-ico">home</mat-icon>
+      <span>Home</span>
+    </a>
+
+    <a mat-button routerLink="/cars" routerLinkActive="active-link" (click)="mobileOpen=false">
+      <mat-icon class="nav-ico">directions_car</mat-icon>
+      <span>Cars</span>
+    </a>
+
+<a mat-button routerLink="/cart" routerLinkActive="active-link" class="cart-link"
+   (click)="mobileOpen=false">
+<span class="badge-host"
+      [matBadge]="cartCount"
+      [matBadgeHidden]="cartCount === 0"
+      matBadgeColor="warn"
+      matBadgePosition="above after"
+      matBadgeOverlap="true"
+      matBadgeSize="small">
+  <mat-icon class="nav-ico">shopping_cart</mat-icon>
+</span>
+
+  <span>Cart</span>
+</a>
+
+
+    <ng-container *ngIf="!authService.getCurrentUser(); else logged">
+      <a mat-button routerLink="/login" routerLinkActive="active-link" (click)="mobileOpen=false">
+        <mat-icon class="nav-ico">login</mat-icon>
+        <span>Login</span>
+      </a>
+      <a mat-button routerLink="/register" routerLinkActive="active-link" (click)="mobileOpen=false">
+        <mat-icon class="nav-ico">person_add</mat-icon>
+        <span>Register</span>
+      </a>
+    </ng-container>
+
+    <ng-template #logged>
+      <a mat-button routerLink="/profile" routerLinkActive="active-link" (click)="mobileOpen=false">
+        <mat-icon class="nav-ico">person</mat-icon>
+        <span>Profile</span>
+      </a>
+      <a *ngIf="authService.isAdmin()" mat-button routerLink="/admin" routerLinkActive="active-link"
+         (click)="mobileOpen=false">
+        <mat-icon class="nav-ico">admin_panel_settings</mat-icon>
+        <span>Admin Panel</span>
+      </a>
+      <button mat-button (click)="logout()">
+        <mat-icon class="nav-ico">logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </ng-template>
+  </nav>
+
+  <button mat-icon-button class="burger" (click)="toggleMobile()" aria-label="Toggle menu">
+    <mat-icon>{{ mobileOpen ? 'close' : 'menu' }}</mat-icon>
+  </button>
+</mat-toolbar>
+
+<router-outlet></router-outlet>
+<app-chatbot></app-chatbot>

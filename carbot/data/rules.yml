@@ -1,0 +1,152 @@
+version: "3.1"
+
+rules:
+  - rule: Start car search form
+    steps:
+      - intent: car_search
+      - action: car_search_form
+      - active_loop: car_search_form
+
+  - rule: Submit car search form
+    condition:
+      - active_loop: car_search_form
+    steps:
+      - action: car_search_form
+      - active_loop: null
+      - action: utter_searching
+      - action: action_search_car
+
+  - rule: Quick search by make/model
+    steps:
+      - intent: search_by_make_model
+      - action: utter_searching
+      - action: action_search_car
+
+
+  - rule: Body type given → continue car_search_form
+    steps:
+      - intent: search_by_body_type
+      - action: car_search_form
+      - active_loop: car_search_form
+
+  - rule: Fuel given → continue car_search_form
+    steps:
+      - intent: search_by_fuel
+      - action: car_search_form
+      - active_loop: car_search_form
+
+  - rule: Max price given → continue car_search_form
+    steps:
+      - intent: search_by_price
+      - action: car_search_form
+      - active_loop: car_search_form
+
+  - rule: Min year given → continue car_search_form
+    steps:
+      - intent: search_by_year
+      - action: car_search_form
+      - active_loop: car_search_form
+
+  - rule: Max mileage given → continue car_search_form
+    steps:
+      - intent: search_by_mileage
+      - action: car_search_form
+      - active_loop: car_search_form
+
+  - rule: Origin given → continue car_search_form
+    steps:
+      - intent: search_by_origin
+      - action: car_search_form
+      - active_loop: car_search_form
+
+
+  - rule: Show cart
+    steps:
+      - intent: show_cart
+      - action: action_show_cart
+
+  - rule: Add to cart (server cart)
+    steps:
+      - intent: add_to_cart
+      - action: action_add_to_cart
+
+  - rule: Clear cart
+    steps:
+      - intent: clear_cart
+      - action: action_clear_cart
+
+  - rule: Remove one item from cart
+    steps:
+      - intent: remove_from_cart
+      - action: action_remove_from_cart
+
+ 
+  - rule: Start checkout form
+    steps:
+      - intent: checkout_cart
+      - action: checkout_form
+      - active_loop: checkout_form
+
+  - rule: Submit checkout form
+    condition:
+      - active_loop: checkout_form
+    steps:
+      - action: checkout_form
+      - active_loop: null
+      - action: action_checkout_cart
+
+
+  - rule: Reserve car (single-car order)
+    steps:
+      - intent: reserve_car
+      - action: action_reserve_car
+
+  - rule: Cancel a reservation
+    steps:
+      - intent: cancel_reservation
+      - action: action_cancel_reservation
+
+  - rule: Order status
+    steps:
+      - intent: order_status
+      - action: action_order_status
+
+  - rule: Reset filters
+    steps:
+      - intent: reset_filters
+      - action: action_reset_filters
+
+  - rule: Greet
+    steps:
+      - intent: greet
+      - action: utter_greet
+
+  - rule: Goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+
+  - rule: Thanks
+    steps:
+      - intent: thank
+      - action: utter_you_are_welcome
+
+  - rule: FAQ hours
+    steps:
+      - intent: faq_hours
+      - action: utter_faq_hours
+
+  - rule: FAQ contact
+    steps:
+      - intent: faq_contact
+      - action: utter_faq_contact
+
+  - rule: Session start
+    steps:
+      - action: action_session_start
+
+
+  - rule: NLU fallback
+    steps:
+      - intent: nlu_fallback
+      - action: action_default_fallback

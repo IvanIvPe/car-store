@@ -1,0 +1,266 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - thank
+  - car_search
+  - search_by_make_model
+  - add_to_cart
+  - reserve_car
+  - show_cart
+  - clear_cart
+  - remove_from_cart
+  - cancel_reservation
+  - order_status
+  - reset_filters
+  - faq_hours
+  - faq_contact
+  - out_of_scope
+  - nlu_fallback
+  - search_by_fuel
+  - search_by_price
+  - search_by_origin
+  - search_by_year
+  - search_by_mileage
+  - search_by_body_type
+  - checkout_cart
+
+entities:
+  - make
+  - model
+  - body_type
+  - fuel
+  - origin
+  - max_price
+  - min_year
+  - max_mileage
+  - color
+  - car_id
+  - user_email
+  - logged_in
+  - jwt
+  - order_id
+
+slots:
+  make:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: make
+
+  model:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: model
+
+  body_type:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: body_type
+      - type: from_text
+        conditions:
+          - active_loop: car_search_form
+            requested_slot: body_type
+
+  fuel:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: fuel
+      - type: from_text
+        conditions:
+          - active_loop: car_search_form
+            requested_slot: fuel
+
+  origin:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: origin
+
+  max_price:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: max_price
+      - type: from_text
+        conditions:
+          - active_loop: car_search_form
+            requested_slot: max_price
+
+  min_year:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: min_year
+      - type: from_text
+        conditions:
+          - active_loop: car_search_form
+            requested_slot: min_year
+
+  max_mileage:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: max_mileage
+      - type: from_text
+        conditions:
+          - active_loop: car_search_form
+            requested_slot: max_mileage
+
+  color:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: color
+
+  car_id:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: car_id
+
+  user_email:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: user_email
+
+  logged_in:
+    type: bool
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: logged_in
+
+  jwt:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: jwt
+
+  session_id:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  order_id:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: order_id
+
+  full_name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: checkout_form
+            requested_slot: full_name
+
+  phone:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: checkout_form
+            requested_slot: phone
+
+  address:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: checkout_form
+            requested_slot: address
+
+forms:
+  car_search_form:
+    required_slots:
+      - body_type
+      - fuel
+      - max_price
+      - min_year
+      - max_mileage
+
+  checkout_form:
+    required_slots:
+      - full_name
+      - phone
+      - address
+
+responses:
+  utter_greet:
+    - text: "Hello! I can help you find the right car. Tell me a make/model (e.g. 'Toyota Corolla') or say 'search' to start a guided search."
+  utter_goodbye:
+    - text: "Goodbye! 👋"
+  utter_you_are_welcome:
+    - text: "You're welcome! 😊"
+    - text: "Anytime!"
+    - text: "Happy to help."
+  utter_ask_body_type:
+    - text: "Which body type are you looking for? (Sedan, SUV, Hatchback, Coupe, Wagon...)"
+  utter_ask_fuel:
+    - text: "What kind of fuel do you prefer? (Petrol, Diesel, Hybrid, Electric)"
+  utter_ask_max_price:
+    - text: "What’s your maximum budget (€)?"
+  utter_ask_min_year:
+    - text: "Minimum year of manufacture?"
+  utter_ask_max_mileage:
+    - text: "Maximum mileage (in km)?"
+  utter_searching:
+    - text: "Searching cars matching your filters..."
+  utter_faq_hours:
+    - text: "We are open Mon–Fri 9am–6pm, Sat 10am–4pm."
+  utter_faq_contact:
+    - text: "Contact us: support@carstore.com, +1 555-123-456."
+  utter_default:
+    - text: "Sorry, I didn’t understand. Can you rephrase? 🙂"
+
+  utter_ask_full_name:
+    - text: "Please tell me your full name for the order."
+  utter_ask_phone:
+    - text: "What phone number should we use for delivery updates?"
+  utter_ask_address:
+    - text: "What is your delivery address?"
+
+actions:
+  - action_search_car
+  - action_reserve_car
+  - action_add_to_cart
+  - action_show_cart
+  - action_clear_cart
+  - action_remove_from_cart
+  - action_cancel_reservation
+  - action_reset_filters
+  - action_debug_slots
+  - action_session_start
+  - action_order_status
+  - action_checkout_cart
+  - action_default_fallback
+  - validate_car_search_form
+  - validate_checkout_form
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
