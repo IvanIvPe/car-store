@@ -25,6 +25,7 @@ intents:
   - search_by_mileage
   - search_by_body_type
   - checkout_cart
+  - cancel
 
 entities:
   - make
@@ -175,6 +176,12 @@ slots:
         conditions:
           - active_loop: checkout_form
             requested_slot: full_name
+        not_intent:
+          - cancel
+          - show_cart
+          - order_status
+          - cancel_reservation
+          - nlu_fallback
 
   phone:
     type: text
@@ -184,6 +191,12 @@ slots:
         conditions:
           - active_loop: checkout_form
             requested_slot: phone
+        not_intent:
+          - cancel
+          - show_cart
+          - order_status
+          - cancel_reservation
+          - nlu_fallback
 
   address:
     type: text
@@ -193,6 +206,12 @@ slots:
         conditions:
           - active_loop: checkout_form
             requested_slot: address
+        not_intent:
+          - cancel
+          - show_cart
+          - order_status
+          - cancel_reservation
+          - nlu_fallback
 
 forms:
   car_search_form:
@@ -211,7 +230,7 @@ forms:
 
 responses:
   utter_greet:
-    - text: "Hello! I can help you find the right car. Tell me a make/model (e.g. 'Toyota Corolla') or say 'search' to start a guided search."
+    - text: "Hello! I can help you find the right car. Tell me a make/model (e.g., 'Toyota Corolla') or say 'search' to start a guided search."
   utter_goodbye:
     - text: "Goodbye! 👋"
   utter_you_are_welcome:
@@ -221,7 +240,7 @@ responses:
   utter_ask_body_type:
     - text: "Which body type are you looking for? (Sedan, SUV, Hatchback, Coupe, Wagon...)"
   utter_ask_fuel:
-    - text: "What kind of fuel do you prefer? (Petrol, Diesel, Hybrid, Electric)"
+    - text: "What fuel type do you prefer? (Petrol, Diesel, Hybrid, Electric)"
   utter_ask_max_price:
     - text: "What’s your maximum budget (€)?"
   utter_ask_min_year:
@@ -239,10 +258,32 @@ responses:
 
   utter_ask_full_name:
     - text: "Please tell me your full name for the order."
+      buttons:
+        - title: "Cancel"
+          payload: /cancel
   utter_ask_phone:
     - text: "What phone number should we use for delivery updates?"
+      buttons:
+        - title: "Cancel"
+          payload: /cancel
   utter_ask_address:
     - text: "What is your delivery address?"
+      buttons:
+        - title: "Cancel"
+          payload: /cancel
+
+  utter_checkout_canceled:
+    - text: "Okay — checkout canceled. What would you like to do next?"
+      buttons:
+        - title: "Show my cart"
+          payload: /show_cart
+        - title: "Search cars"
+          payload: /car_search
+        - title: "Reset filters"
+          payload: /reset_filters
+
+  utter_out_of_scope:
+    - text: "I’m here to help with finding and ordering cars. Try asking about cars, cart, or orders. 🙂"
 
 actions:
   - action_search_car
@@ -258,6 +299,7 @@ actions:
   - action_order_status
   - action_checkout_cart
   - action_default_fallback
+  - action_cancel_checkout
   - validate_car_search_form
   - validate_checkout_form
 

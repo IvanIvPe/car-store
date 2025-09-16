@@ -1,7 +1,6 @@
 version: "3.1"
 
 nlu:
-
 - intent: greet
   examples: |
     - Hello
@@ -65,13 +64,8 @@ nlu:
     - I want a [coupe](body_type) [hybrid](fuel)
     - Any [electric](fuel) car below [25000](max_price)?
     - Cars from [Germany](origin) under [18000](max_price)
-    - I want a car from [France](origin)
     - Minimum year [2018](min_year) and max [120000](max_mileage) km
     - At least [2016](min_year), up to [100000](max_mileage) km
-    - I don't care about origin
-    - Any origin is fine
-    - From anywhere
-    # terse / telegraphic mixed constraints
     - SUV under [15000](max_price) min [2018](min_year)
     - SUV max [15000](max_price) from [2018](min_year)
     - SUV < [15000](max_price) >= [2018](min_year)
@@ -80,7 +74,6 @@ nlu:
     - [SUV](body_type) below [20000](max_price) newer than [2017](min_year)
     - [Coupe](body_type) <= [12000](max_price) from [2010](min_year)
     - [SUV](body_type) min [2019](min_year) under [25000](max_price)
-    # more variations / separators / currency
     - suv under [15000](max_price) min [2018](min_year)
     - suv <= [15000](max_price) from [2018](min_year)
     - suv below [15000](max_price) newer than [2018](min_year)
@@ -98,7 +91,6 @@ nlu:
     - show cars from [Germany](origin) up to [18000](max_price) min [2015](min_year)
     - [sedan](body_type) from [France](origin) up to [12000](max_price)
     - any body type up to [4000](max_price) min [2008](min_year)
-
 
 - intent: search_by_make_model
   examples: |
@@ -127,7 +119,6 @@ nlu:
     - [Camry](model)
     - [Yaris](model)
     - [Fiesta](model)
-    # augmented combos
     - [Toyota](make) up to [12000](max_price)
     - [BMW](make) min [2016](min_year)
     - [Audi](make) [A3](model) up to [9000](max_price)
@@ -264,7 +255,6 @@ nlu:
     - prefer [hybrid](fuel)
     - [electric](fuel) only
 
-
 - intent: add_to_cart
   examples: |
     - Reserve this car
@@ -391,6 +381,18 @@ nlu:
     - finalize my order
     - confirm purchase
 
+- intent: cancel
+  examples: |
+    - cancel
+    - stop
+    - abort
+    - never mind
+    - cancel checkout
+    - cancel purchase
+    - not now
+    - exit
+    - go back
+
 - intent: reset_filters
   examples: |
     - clear filters
@@ -425,12 +427,10 @@ nlu:
     - How do I reach support?
     - Contact details
 
-
-- intent: nlu_fallback
+- intent: out_of_scope
   examples: |
     - sdfhghjkl
     - lskdqfjwe
-    - what now
     - asd123
     - random text
     - gibberish
@@ -440,9 +440,10 @@ nlu:
     - 1234567890
     - !@#$%^&*()
     - ???!!!
-    - ???? 
+    - ????
     - !!!???
-
+    - tell me a joke
+    - what's the weather tomorrow?
 
 - regex: number
   examples: |
@@ -459,7 +460,6 @@ nlu:
 - regex: year4
   examples: |
     - (19|20)\d{2}
-
 
 - lookup: body_type
   examples: |

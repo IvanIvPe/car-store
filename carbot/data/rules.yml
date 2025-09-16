@@ -22,7 +22,6 @@ rules:
       - action: utter_searching
       - action: action_search_car
 
-
   - rule: Body type given → continue car_search_form
     steps:
       - intent: search_by_body_type
@@ -59,7 +58,6 @@ rules:
       - action: car_search_form
       - active_loop: car_search_form
 
-
   - rule: Show cart
     steps:
       - intent: show_cart
@@ -80,7 +78,6 @@ rules:
       - intent: remove_from_cart
       - action: action_remove_from_cart
 
- 
   - rule: Start checkout form
     steps:
       - intent: checkout_cart
@@ -95,6 +92,42 @@ rules:
       - active_loop: null
       - action: action_checkout_cart
 
+  - rule: Cancel checkout (stop form + clear slots)
+    condition:
+      - active_loop: checkout_form
+    steps:
+      - intent: cancel
+      - action: action_deactivate_loop
+      - active_loop: null
+      - action: action_cancel_checkout
+      - action: utter_checkout_canceled
+
+  - rule: Show cart during checkout (interrupt)
+    condition:
+      - active_loop: checkout_form
+    steps:
+      - intent: show_cart
+      - action: action_deactivate_loop
+      - active_loop: null
+      - action: action_show_cart
+
+  - rule: Cancel reservation during checkout (interrupt)
+    condition:
+      - active_loop: checkout_form
+    steps:
+      - intent: cancel_reservation
+      - action: action_deactivate_loop
+      - active_loop: null
+      - action: action_cancel_reservation
+
+  - rule: Order status during checkout (interrupt)
+    condition:
+      - active_loop: checkout_form
+    steps:
+      - intent: order_status
+      - action: action_deactivate_loop
+      - active_loop: null
+      - action: action_order_status
 
   - rule: Reserve car (single-car order)
     steps:
@@ -145,6 +178,10 @@ rules:
     steps:
       - action: action_session_start
 
+  - rule: Out of scope
+    steps:
+      - intent: out_of_scope
+      - action: utter_out_of_scope
 
   - rule: NLU fallback
     steps:

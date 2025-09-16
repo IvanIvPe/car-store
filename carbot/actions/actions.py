@@ -58,11 +58,9 @@ def _fmt_eur(n: Any) -> str:
         return "€—"
 
 def _headers_from_tracker(tracker: Tracker) -> Dict[str, str]:
-    """Forward shared cart session + auth to the API so the bot sees the same cart as the site."""
     md = tracker.latest_message.get("metadata", {}) or {}
     sid = _norm(tracker.get_slot("session_id")) or _norm(md.get("session_id")) or _norm(md.get("sid"))
     jwt = _norm(md.get("jwt"))
-
     headers: Dict[str, str] = {"Content-Type": "application/json"}
     if sid:
         headers["x-session-id"] = sid
@@ -206,44 +204,30 @@ def _is_any(v: Optional[str]) -> bool:
 
 _NUM_RE = r"(?:\d[\d\.,]*)"
 def _extract_free_query(text: str) -> Dict[str, Any]:
-    """Best-effort extraction for 'SUV under 15000 min 2018' style queries."""
     t = (text or "").lower().strip()
-
-    # body type
     body = None
     for b in sorted(ALLOWED_BODIES, key=len, reverse=True):
         if re.search(rf"\b{re.escape(b)}\b", t):
             body = "wagon" if b == "estate" else b
             break
-
-    # max price patterns
     max_price = None
     m = re.search(rf"(?:under|<=?|less than|below|max|up to)\s*({_NUM_RE})", t)
     if m:
         max_price = _to_float(m.group(1))
-
-    # min year patterns
     min_year = None
     my = re.search(r"(?:min(?:imum)?|>=|from|since|after|newer than)\s*((?:19|20)\d{2})", t)
     if my:
         min_year = _to_int(my.group(1))
-
-
     if (max_price is None or min_year is None):
         nums = [n.replace(",", "").replace(".", "") for n in re.findall(_NUM_RE, t)]
         nums_int = [int(n) for n in nums if n.isdigit()]
-
         years = [n for n in nums_int if 1980 <= n <= 2035]
         prices = [n for n in nums_int if n >= 500 and n not in years]
         if min_year is None and years:
-
             min_year = max(years)
         if max_price is None and prices:
             max_price = min(prices)
-
     return {"body_type": body, "max_price": max_price, "min_year": min_year}
-
-
 
 class ValidateCarSearchForm(FormValidationAction):
     def name(self) -> Text:
@@ -315,7 +299,6 @@ class ValidateCarSearchForm(FormValidationAction):
         dispatcher.utter_message(text="Mileage should be between 1,000 and 500,000 km.")
         return {"max_mileage": None}
 
-
 class ValidateCheckoutForm(FormValidationAction):
     def name(self) -> Text:
         return "validate_checkout_form"
@@ -344,7 +327,6 @@ class ValidateCheckoutForm(FormValidationAction):
             return {"address": v}
         dispatcher.utter_message(text="Please provide a longer address (at least 5 characters).")
         return {"address": None}
-
 
 class ActionSearchCar(Action):
     def name(self) -> Text:
@@ -410,7 +392,6 @@ class ActionSearchCar(Action):
         return []
 
 class ActionReserveCar(Action):
-    """Creates a one-car reservation/order via /cart/reserve (outside of cart)."""
     def name(self) -> Text:
         return "action_reserve_car"
 
@@ -444,7 +425,6 @@ class ActionReserveCar(Action):
         dispatcher.utter_message(text="Sorry, I couldn't place the reservation.")
         return [SlotSet("user_email", user_email)]
 
-
 class ActionAddToCart(Action):
     def name(self) -> Text:
         return "action_add_to_cart"
@@ -470,7 +450,6 @@ class ActionAddToCart(Action):
         return []
 
 class ActionShowCart(Action):
-    """Shows the server cart (shared with the UI)."""
     def name(self) -> Text:
         return "action_show_cart"
 
@@ -506,7 +485,6 @@ class ActionClearCart(Action):
         return []
 
 class ActionRemoveFromCart(Action):
-    """Removes one car from the server cart by carId (mapped via cartItemId)."""
     def name(self) -> Text:
         return "action_remove_from_cart"
 
@@ -543,9 +521,7 @@ class ActionRemoveFromCart(Action):
         dispatcher.utter_message(json_message={"event": "cart_updated"})
         return []
 
-
 class ActionCheckoutCart(Action):
-    """Checks out the server cart → creates an Order via /orders (requires JWT)."""
     def name(self) -> Text:
         return "action_checkout_cart"
 
@@ -562,12 +538,10 @@ class ActionCheckoutCart(Action):
             dispatcher.utter_message(text="Your cart is empty.")
             return []
 
-
         me = _api_get_auth("/auth/me", jwt_token) or {}
         default_full_name = me.get("fullName") or me.get("email") or "Customer"
         default_email = me.get("email")
 
-    
         full_name = _norm(tracker.get_slot("full_name")) or default_full_name
         phone = _norm(tracker.get_slot("phone"))
         address = _norm(tracker.get_slot("address"))
@@ -597,17 +571,14 @@ class ActionCheckoutCart(Action):
             dispatcher.utter_message(text="Sorry, I couldn't place the order right now.")
             return []
 
-        # clear cart after success
         _ = _api_post("/cart/clear", {}, headers=_headers_from_tracker(tracker))
 
         oid = created.get("orderId")
         dispatcher.utter_message(text=f"✅ Order placed! Your order number is #{oid}.")
-  
         dispatcher.utter_message(json_message={"event": "order_placed", "orderId": oid})
         dispatcher.utter_message(json_message={"event": "cart_cleared"})
         dispatcher.utter_message(json_message={"event": "cart_updated"})
 
-        #  reset checkout slots
         return [
             SlotSet("full_name", None),
             SlotSet("phone", None),
@@ -615,7 +586,6 @@ class ActionCheckoutCart(Action):
         ]
 
 class ActionCancelReservation(Action):
-    """Cancels an existing order (not the cart)."""
     def name(self) -> Text:
         return "action_cancel_reservation"
 
@@ -704,15 +674,9 @@ class ActionSessionStart(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict):
         events: List = [SessionStarted()]
         metadata = tracker.latest_message.get("metadata", {}) or {}
-
-        # email
         jwt_token = _norm(metadata.get("jwt"))
-        email = _auth_email_from_jwt(jwt_token) or _norm(metadata.get("user_email")) \
-                or _norm(os.getenv("CARBOT_DEFAULT_USER_EMAIL")) or "guest@example.com"
-
-        # shared session id with UI
+        email = _auth_email_from_jwt(jwt_token) or _norm(metadata.get("user_email")) or _norm(os.getenv("CARBOT_DEFAULT_USER_EMAIL")) or "guest@example.com"
         sid = _norm(metadata.get("session_id")) or _norm(metadata.get("sid")) or "bot-session"
-
         events.append(SlotSet("user_email", email))
         events.append(SlotSet("session_id", sid))
         events.append(ActionExecuted("action_listen"))
@@ -725,11 +689,9 @@ class ActionDefaultFallback(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict):
         text = tracker.latest_message.get("text") or ""
         parsed = _extract_free_query(text)
-
         body = parsed.get("body_type")
         max_price = parsed.get("max_price")
         min_year = parsed.get("min_year")
-
         if body or max_price or min_year:
             events: List = []
             if body:
@@ -740,6 +702,17 @@ class ActionDefaultFallback(Action):
                 events.append(SlotSet("min_year", min_year))
             dispatcher.utter_message(text="Searching cars matching your filters...")
             return events + [FollowupAction("action_search_car")]
-
         dispatcher.utter_message(text="Sorry, I didn’t understand. Can you rephrase? 🙂")
         return []
+
+class ActionCancelCheckout(Action):
+    def name(self) -> Text:
+        return "action_cancel_checkout"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict):
+        dispatcher.utter_message(text="Checkout canceled.")
+        return [
+            SlotSet("full_name", None),
+            SlotSet("phone", None),
+            SlotSet("address", None),
+        ]
