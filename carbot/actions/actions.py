@@ -391,8 +391,6 @@ class ActionReserveCar(Action):
         return "action_reserve_car"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict):
-        user_email = _resolve_email(tracker)
-
         car_id = _to_int(tracker.get_slot("car_id"))
         make   = _norm(tracker.get_slot("make"))
         model  = _norm(tracker.get_slot("model"))
@@ -405,20 +403,21 @@ class ActionReserveCar(Action):
                 car_id = _to_int(items[0].get("carId"))
 
         if not car_id:
-            dispatcher.utter_message(text='Please specify the car ID (e.g., "reserve car id 3").')
-            return [SlotSet("user_email", user_email)]
+            dispatcher.utter_message(text='Please specify the car ID (e.g., "reserve car 176").')
+            return []
 
-        payload = {"user": user_email, "carId": car_id}
-        ok = _api_post("/cart/reserve", payload, headers=_headers_from_tracker(tracker)) if API_BASE else None
-        if ok is not None:
-            order_id = ok.get("orderId") if isinstance(ok, dict) else None
-            msg = f"✅ Reservation placed! Order #{order_id}." if order_id else "✅ Reservation placed."
-            dispatcher.utter_message(text=msg)
-            dispatcher.utter_message(json_message={"event": "cart_updated"})
-            return [SlotSet("user_email", user_email)]
+        added = _api_post("/cart/add", {"carId": int(car_id), "quantity": 1}, headers=_headers_from_tracker(tracker))
+        if added is None:
+            dispatcher.utter_message(text="I couldn't add that car to your cart.")
+            return []
 
-        dispatcher.utter_message(text="Sorry, I couldn't place the reservation.")
-        return [SlotSet("user_email", user_email)]
+        dispatcher.utter_message(text=f"Starting checkout for car #{car_id}.")
+        return [
+            SlotSet("full_name", None),
+            SlotSet("phone", None),
+            SlotSet("address", None),
+            FollowupAction("checkout_form"),
+        ]
 
 class ActionAddToCart(Action):
     def name(self) -> Text:
