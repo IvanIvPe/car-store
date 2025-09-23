@@ -2,21 +2,17 @@
   <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
 </div>
 
-
 <div class="center muted" *ngIf="!loading && !car">
   Car not found.
 </div>
 
-
 <div class="details-wrap" *ngIf="!loading && car">
-
   <div class="left">
     <img
       [src]="car.image || 'assets/images/placeholder-car.png'"
       (error)="onImgError($event)"
       [alt]="car.make + ' ' + car.model" />
   </div>
-
 
   <div class="right">
     <div class="title-row">
@@ -29,18 +25,16 @@
 
     <mat-divider></mat-divider>
 
-
     <div class="tags">
       <mat-chip-set>
+        <mat-chip *ngIf="car.carId || $any(car).id"><mat-icon>confirmation_number</mat-icon> ID: {{ car.carId ? car.carId : $any(car).id }}</mat-chip>
         <mat-chip *ngIf="car.year"><mat-icon>calendar_today</mat-icon> {{ car.year }}</mat-chip>
         <mat-chip *ngIf="car.fuel"><mat-icon>local_gas_station</mat-icon> {{ car.fuel }}</mat-chip>
         <mat-chip *ngIf="car.mileage != null"><mat-icon>speed</mat-icon> {{ car.mileage | number }} km</mat-chip>
         <mat-chip *ngIf="car.color"><mat-icon>palette</mat-icon> {{ car.color }}</mat-chip>
-
         <mat-chip *ngIf="car.bodyType"><mat-icon>directions_car_filled</mat-icon> {{ car.bodyType }}</mat-chip>
       </mat-chip-set>
     </div>
-
 
     <div class="specs">
       <div class="spec">
@@ -67,7 +61,6 @@
         <span class="val">{{ car.color || '—' }}</span>
       </div>
 
-
       <div class="spec">
         <mat-icon>directions_car</mat-icon>
         <span class="label">Body type</span>
@@ -82,7 +75,6 @@
         </span>
       </div>
     </div>
-
 
     <div class="actions">
       <button mat-raised-button color="primary" class="reserve-btn" (click)="addToCart()">
