@@ -7,18 +7,18 @@ rules:
       - action: car_search_form
       - active_loop: car_search_form
 
+  - rule: Make/model starts guided search
+    steps:
+      - intent: search_by_make_model
+      - action: car_search_form
+      - active_loop: car_search_form
+
   - rule: Submit car search form
     condition:
       - active_loop: car_search_form
     steps:
       - action: car_search_form
       - active_loop: null
-      - action: utter_searching
-      - action: action_search_car
-
-  - rule: Quick search by make/model
-    steps:
-      - intent: search_by_make_model
       - action: utter_searching
       - action: action_search_car
 
@@ -57,6 +57,12 @@ rules:
       - intent: search_by_origin
       - action: car_search_form
       - active_loop: car_search_form
+
+  - rule: Quick search by make/model (no form)
+    steps:
+      - intent: quick_search_by_make_model
+      - action: utter_searching
+      - action: action_search_car
 
   - rule: Show cart
     steps:

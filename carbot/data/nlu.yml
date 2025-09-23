@@ -1,6 +1,7 @@
 version: "3.1"
 
 nlu:
+
 - intent: greet
   examples: |
     - Hello
@@ -16,6 +17,8 @@ nlu:
     - How's it going?
     - How are you?
     - Yo
+    - Hello there
+    - Hi friend
 
 - intent: goodbye
   examples: |
@@ -35,6 +38,7 @@ nlu:
     - Until next time
     - Peace out
     - I'm out
+    - Bye bye
 
 - intent: thank
   examples: |
@@ -47,6 +51,8 @@ nlu:
     - Thanks so much
     - I appreciate it
     - Much appreciated
+    - Cheers
+    - Thanks again
 
 - intent: car_search
   examples: |
@@ -58,187 +64,145 @@ nlu:
     - I want to see cars
     - I'm looking for a car
     - I want to buy a car
-    - I'm looking for an [SUV](body_type) with [diesel](fuel) under [15000](max_price) €
-    - Find me a [hatchback](body_type) on [petrol](fuel)
-    - Show [sedan](body_type) cars under [20000](max_price)
-    - I want a [coupe](body_type) [hybrid](fuel)
-    - Any [electric](fuel) car below [25000](max_price)?
-    - Cars from [Germany](origin) under [18000](max_price)
-    - Minimum year [2018](min_year) and max [120000](max_mileage) km
-    - At least [2016](min_year), up to [100000](max_mileage) km
-    - SUV under [15000](max_price) min [2018](min_year)
-    - SUV max [15000](max_price) from [2018](min_year)
-    - SUV < [15000](max_price) >= [2018](min_year)
-    - [Hatchback](body_type) under [7000](max_price) min [2012](min_year)
-    - [Sedan](body_type) up to [10000](max_price) since [2015](min_year)
-    - [SUV](body_type) below [20000](max_price) newer than [2017](min_year)
-    - [Coupe](body_type) <= [12000](max_price) from [2010](min_year)
-    - [SUV](body_type) min [2019](min_year) under [25000](max_price)
-    - suv under [15000](max_price) min [2018](min_year)
-    - suv <= [15000](max_price) from [2018](min_year)
-    - suv below [15000](max_price) newer than [2018](min_year)
-    - [SUV](body_type) max [15000](max_price) >= [2018](min_year)
-    - [SUV](body_type) up to [15,000](max_price) € since [2018](min_year)
-    - [SUV](body_type) up to €[15000](max_price) from [2018](min_year)
-    - [SUV](body_type) up to [15k](max_price) from [2018](min_year)
-    - [SUV](body_type) budget [15000](max_price) min year [2018](min_year)
-    - [crossover](body_type) up to [12000](max_price) min [2016](min_year)
-    - [mpv](body_type) up to [9000](max_price) from [2014](min_year)
-    - [wagon](body_type) up to [8000](max_price) after [2012](min_year)
-    - [van](body_type) up to [6000](max_price) [diesel](fuel) min [2010](min_year)
-    - [SUV](body_type) [diesel](fuel) under [20000](max_price) min [2017](min_year)
-    - car under [5000](max_price) [petrol](fuel) from [2010](min_year)
-    - show cars from [Germany](origin) up to [18000](max_price) min [2015](min_year)
-    - [sedan](body_type) from [France](origin) up to [12000](max_price)
-    - any body type up to [4000](max_price) min [2008](min_year)
+    - Show me available cars
+    - Can you list some cars?
+    - I need a new car
+    - Please show me what you have
+    - I'm interested in buying a car
+    - I'd like to browse your cars
+    - Show me some options
+    - Start a car search
+    - Begin car search
 
 - intent: search_by_make_model
   examples: |
-    - [Yugo](make)
-    - [Toyota](make)
-    - [BMW](make)
     - [Audi](make)
+    - [BMW](make)
+    - [Toyota](make)
     - [Volkswagen](make)
     - [Mercedes](make)
     - [Skoda](make)
     - [Opel](make)
-    - [Toyota](make) [Corolla](model)
-    - [BMW](make) [X5](model)
+    - [Honda](make)
+    - [Fiat](make)
+    - [Yugo](make)
+    - I want an [Audi](make)
+    - I’m looking for a [BMW](make)
+    - Do you have [Toyota](make)?
+    - I need a [Mercedes](make)
+    - Can you show me [Volkswagen](make)?
+    - I’d like a [Skoda](make)
+    - Please find me an [Opel](make)
+    - Show me [Honda](make) cars
+    - I want to see [Fiat](make) cars
+    - I’m searching for [Toyota](make) cars
     - [Audi](make) [A4](model)
+    - [BMW](make) [X5](model)
+    - [Toyota](make) [Corolla](model)
     - [Volkswagen](make) [Golf](model)
-    - [Toyota](make) [RAV4](model)
-    - [Corolla](model)
-    - [RAV4](model)
-    - [Octavia](model)
-    - [Corsa](model)
-    - [Golf](model)
-    - [A4](model)
-    - [X5](model)
-    - [Civic](model)
-    - [Accord](model)
-    - [Camry](model)
-    - [Yaris](model)
-    - [Fiesta](model)
-    - [Toyota](make) up to [12000](max_price)
-    - [BMW](make) min [2016](min_year)
-    - [Audi](make) [A3](model) up to [9000](max_price)
-    - [Volkswagen](make) [Golf](model) min [2013](min_year)
-    - [Skoda](make) [Octavia](model) [diesel](fuel)
-    - [Mercedes](make) [C](model) [sedan](body_type)
-    - [Opel](make) [Corsa](model) up to [4000](max_price)
-    - [Honda](make) [Civic](model) from [2015](min_year)
-    - [Toyota](make) [RAV4](model) [hybrid](fuel) min [2017](min_year)
+    - [Honda](make) [Civic](model)
+    - [Skoda](make) [Octavia](model)
+    - [Opel](make) [Corsa](model)
+    - I’m interested in [Audi](make) [A3](model)
+    - Do you have [Toyota](make) [RAV4](model)?
+    - Can I see [BMW](make) [X5](model)?
+    - I want [Mercedes](make) [C](model)
+    - Find me a [Volkswagen](make) [Golf](model)
+    - Looking for [Toyota](make) [Corolla](model)
+    - I need an [Audi](make) [A4](model)
+
+- intent: quick_search_by_make_model
+  examples: |
+    - show [Audi](make) now
+    - list [Audi](make) cars
+    - just show [Audi](make)
+    - show me [BMW](make) [X5](model) now
+    - list [Toyota](make) [Corolla](model)
+    - show [Opel](make) today
+    - quick search [Audi](make)
+    - display [Volkswagen](make) [Golf](model) immediately
+    - list [Mercedes](make) cars now
+    - I want to see [Skoda](make) right away
+    - show [Honda](make) cars instantly
+    - give me [Fiat](make) now
+    - list [Toyota](make) options quickly
 
 - intent: search_by_origin
   examples: |
     - Cars from [Serbia](origin)
-    - Do you have cars from [Germany](origin)?
-    - Show me cars from [Italy](origin)
+    - Cars from [Germany](origin)
+    - Cars from [Italy](origin)
+    - Cars from [France](origin)
+    - Cars from [Japan](origin)
+    - Cars from [USA](origin)
+    - Cars from [Spain](origin)
     - I want a car from [France](origin)
-    - [Serbia](origin)
-    - [Germany](origin)
-    - [France](origin)
-    - Any origin
-    - It doesn't matter
-    - I don't care
-    - No preference
-    - From anywhere
-    - Anywhere
-    - Worldwide
-    - Global
-    - International
-    - No specific origin
+    - Show me cars from [Germany](origin)
+    - Do you have cars from [Italy](origin)?
+    - Made in [Japan](origin)
+    - Built in [USA](origin)
 
 - intent: search_by_price
   examples: |
-    - I'm looking for a car under [3000](max_price) euros
+    - Show me cars under [3000](max_price) euros
     - I have a budget of [2500](max_price) euros
     - My budget is [2000](max_price)
-    - Can I see cars under [4000](max_price)?
-    - Only show cars below [1500](max_price)
-    - [5000](max_price)
-    - Up to [3500](max_price) euros
+    - Cars below [4000](max_price)
+    - Cars less than [7000](max_price)
+    - Cars cheaper than [8000](max_price)
+    - Under [5000](max_price)
+    - Up to [3500](max_price)
     - Max [4500](max_price)
     - Maximum [6000](max_price)
-    - Less than [7000](max_price)
-    - Below [8000](max_price)
-    - Under [9000](max_price) euros please
-    - I want a car for less than [10000](max_price) euros
-    - No more than [12000](max_price) euros
     - No more than [12000](max_price)
-    - No higher than [12000](max_price)
-    - No greater than [12000](max_price)
-    - Not above [12000](max_price)
-    - Not exceeding [12000](max_price)
-    - Not beyond [12000](max_price)
-    - Not over [12000](max_price)
-    - Not past [12000](max_price)
-    - Not exceeding [12000](max_price) euros
-    - Up to €[15000](max_price)
-    - Up to [15,000](max_price) €
-    - Max [12k](max_price)
-    - Budget [7000](max_price)
-    - Price cap [8000](max_price)
-    - Price ceiling [5000](max_price)
+    - Price limit [10000](max_price)
+    - Cars priced below [15000](max_price)
+    - I can spend up to [20000](max_price)
+    - Cars within [9000](max_price)
 
 - intent: search_by_year
   examples: |
     - Minimum year [2015](min_year)
     - At least [2018](min_year)
-    - Newer than [2016](min_year)
-    - Not older than [2017](min_year)
     - From [2019](min_year) onwards
     - [2020](min_year) or newer
+    - Not older than [2017](min_year)
     - [2014](min_year) or later
-    - No older than [2013](min_year)
-    - [2011](min_year)
-    - [2012](min_year)
-    - [2013](min_year)
-    - [2014](min_year)
-    - min [2018](min_year)
-    - >= [2018](min_year)
-    - from [2018](min_year)
-    - since [2018](min_year)
-    - after [2018](min_year)
-    - newer than [2010](min_year)
-    - model year from [2015](min_year)
-    - [2012](min_year)+
+    - Cars after [2016](min_year)
+    - Cars since [2018](min_year)
+    - Cars newer than [2010](min_year)
+    - Model year from [2015](min_year)
 
 - intent: search_by_mileage
   examples: |
     - Max [120000](max_mileage) km
-    - I want mileage under [100000](max_mileage)
-    - Up to [80000](max_mileage) kilometers
-    - No more than [90000](max_mileage) km
+    - Mileage under [100000](max_mileage)
     - Less than [70000](max_mileage) km
     - Below [60000](max_mileage) km
     - Under [50000](max_mileage) km
-    - Not higher than [40000](max_mileage) km
-    - Not greater than [30000](max_mileage) km
     - Not above [20000](max_mileage) km
-    - Not exceeding [15000](max_mileage) km
-    - Not beyond [10000](max_mileage) km
-    - Under [50k](max_mileage)
-    - Max [80,000](max_mileage)
-    - Cap [60,000](max_mileage) km
+    - No more than [90000](max_mileage) km
+    - Cars under [40000](max_mileage) km
+    - Cars up to [15000](max_mileage) km
+    - Cars with mileage below [80000](max_mileage)
 
 - intent: search_by_body_type
   examples: |
     - [SUV](body_type)
     - [Hatchback](body_type)
+    - [Sedan](body_type)
+    - [Coupe](body_type)
+    - [Wagon](body_type)
+    - [Pickup](body_type)
+    - [Van](body_type)
+    - [MPV](body_type)
+    - [Crossover](body_type)
     - Show me [sedan](body_type) cars
     - I want a [wagon](body_type)
     - Do you have a [coupe](body_type)?
-    - I'm looking for a [pickup](body_type)
-    - A [van](body_type)
-    - A [mpv](body_type)
-    - A [crossover](body_type)
-    - [suv](body_type) please
-    - [hatchback](body_type) only
-    - [sedan](body_type) only
-    - just [wagon](body_type)
-    - [coupe](body_type) I'm interested in
-    - [crossover](body_type) interests me
+    - Looking for a [pickup](body_type)
+    - A [van](body_type) please
+    - Interested in [crossover](body_type) cars
 
 - intent: search_by_fuel
   examples: |
@@ -250,10 +214,8 @@ nlu:
     - I want a [petrol](fuel) car
     - Do you have [diesel](fuel) cars?
     - Show me [electric](fuel) vehicles
-    - [diesel](fuel) only
-    - [petrol](fuel) please
-    - prefer [hybrid](fuel)
-    - [electric](fuel) only
+    - Looking for [hybrid](fuel)
+    - [electric](fuel) only please
 
 - intent: add_to_cart
   examples: |
@@ -267,16 +229,10 @@ nlu:
     - I want to reserve [RAV4](model)
     - Please add [Corolla](model) to my cart
     - I'd like to book [X5](model)
-    - Book [Yugo](make) for me
-    - Reserve [Toyota](make)
-    - I want to reserve [BMW](make)
-    - Please add [Audi](make) to my cart
-    - I'd like to book [Volkswagen](make)
     - Reserve car with ID [123](car_id)
-    - Add car with ID [456](car_id) to my cart
+    - Add car with ID [456](car_id)
     - Book car with ID [789](car_id)
     - I want to reserve car with ID [101](car_id)
-    - Please add car with ID [112](car_id)
     - add [71](car_id)
     - add id [71](car_id)
 
@@ -289,9 +245,7 @@ nlu:
     - I want to reserve car [123](car_id)
     - reserve the [Golf](model)
     - book the [A4](model)
-    - reserve a [Toyota](make)
-    - can you book a [BMW](make) for me?
-    - reserve [RAV4](model) for me
+    - reserve the [RAV4](model) for me
 
 - intent: show_cart
   examples: |
@@ -300,56 +254,37 @@ nlu:
     - Show my reservations
     - My cart
     - What cars did I reserve?
-    - Show me my cart
-    - Show me my reservations
     - List my reserved cars
-    - List my cart
-    - Show my booked cars
+    - Show me my booked cars
     - What vehicles did I reserve?
-    - Show me my booked vehicles
-    - List my booked vehicles
-    - Show my booked items
-    - What items did I reserve?
+    - List my booked items
 
 - intent: clear_cart
   examples: |
     - clear my cart
     - empty cart
     - remove everything from my cart
-    - clear cart
-    - empty my basket
-    - remove all items from my cart
-    - clear my basket
-    - empty basket
-    - remove everything from my basket
     - clear basket
-    - empty my cart
-    - remove all items from my basket
-    - clear the shopping cart
+    - empty basket
+    - remove all items
+    - clear shopping cart
 
 - intent: remove_from_cart
   examples: |
     - remove [71](car_id) from my cart
     - delete [71](car_id) from cart
     - remove car [302](car_id)
-    - remove item [123](car_id)
-    - take [415](car_id) out of my cart
-    - delete [202](car_id) from my cart
-    - remove id [71](car_id)
     - delete car [71](car_id)
+    - take [415](car_id) out of my cart
 
 - intent: cancel_reservation
   examples: |
     - Cancel my reservation
     - Cancel my order
-    - I want to cancel my reservation
     - Please cancel my order
     - Cancel order [123](order_id)
     - Cancel reservation [456](order_id)
     - Cancel order number [789](order_id)
-    - Can you cancel order [101](order_id)?
-    - I need to cancel reservation [202](order_id)
-    - Please cancel reservation number [303](order_id)
 
 - intent: order_status
   examples: |
@@ -361,23 +296,16 @@ nlu:
     - Reservation status
     - Status of my order
     - Status of my reservation
-    - How is my order progressing?
-    - Update on my order
-    - Show my recent orders
 
 - intent: checkout_cart
   examples: |
     - checkout
     - proceed to checkout
     - place the order
-    - place my order
     - complete the purchase
     - buy now
     - pay now
     - submit my order
-    - finish checkout
-    - I want to checkout
-    - let's checkout
     - finalize my order
     - confirm purchase
 
@@ -400,14 +328,10 @@ nlu:
     - remove all filters
     - start over
     - show all cars again
-    - remove price filter
-    - remove origin filter
     - reset search
     - clear all filters
     - start a new search
-    - I want to change my filters
     - Forget previous filters
-    - Let's start again
 
 - intent: faq_hours
   examples: |
@@ -429,19 +353,14 @@ nlu:
 
 - intent: out_of_scope
   examples: |
-    - sdfhghjkl
-    - lskdqfjwe
-    - asd123
-    - random text
-    - gibberish
     - asdfghjkl
     - qwertyuiop
     - zxcvbnm
     - 1234567890
     - !@#$%^&*()
     - ???!!!
-    - ????
-    - !!!???
+    - gibberish
+    - nonsense
     - tell me a joke
     - what's the weather tomorrow?
 
@@ -457,10 +376,6 @@ nlu:
   examples: |
     - (\d{1,3}([.,]\d{3})+|\d{3,6}|\d{1,3}k)
 
-- regex: year4
-  examples: |
-    - (19|20)\d{2}
-
 - lookup: body_type
   examples: |
     - sedan
@@ -468,13 +383,11 @@ nlu:
     - hatchback
     - coupe
     - wagon
-    - estate
     - pickup
     - van
     - mpv
     - crossover
     - minivan
-    - other
 
 - lookup: fuel
   examples: |
@@ -490,7 +403,6 @@ nlu:
     - Audi
     - BMW
     - Toyota
-    - Yugo
     - Volkswagen
     - Mercedes
     - Skoda
@@ -529,8 +441,12 @@ nlu:
     - A3
     - X5
     - Clio
-    - 308
     - Fiesta
+    - Civic
+    - Accord
+    - Camry
+    - Yaris
+    - Punto
     - Model 3
     - Model S
 
@@ -578,7 +494,6 @@ nlu:
     - saloon
     - four-door
     - four door
-    - saloon car
 
 - synonym: SUV
   examples: |
@@ -592,3 +507,49 @@ nlu:
     - station wagon
     - estate car
     - touring
+
+- synonym: any
+  examples: |
+    - any
+    - Any
+    - ANY
+    - all
+    - All
+    - whatever
+    - Whatever
+    - whichever
+    - Whichever
+    - either
+    - Either
+    - no preference
+    - No preference
+    - doesn't matter
+    - Doesn't matter
+    - does not matter
+    - Does not matter
+    - nothing specific
+    - Nothing specific
+    - no specific
+    - No specific
+    - no particular
+    - No particular
+    - I don't care
+    - i don't care
+    - I dont care
+    - i dont care
+    - don't care
+    - Dont care
+    - idc
+    - anything
+    - Anything
+    - any type
+    - any kind
+    - any body type
+    - any fuel
+    - any origin
+    - any price
+    - any year
+    - any mileage
+    - any make
+    - any model
+

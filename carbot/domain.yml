@@ -26,6 +26,7 @@ intents:
   - search_by_body_type
   - checkout_cart
   - cancel
+  - quick_search_by_make_model
 
 entities:
   - make
@@ -88,7 +89,7 @@ slots:
         entity: origin
 
   max_price:
-    type: float
+    type: text
     influence_conversation: true
     mappings:
       - type: from_entity
@@ -99,7 +100,7 @@ slots:
             requested_slot: max_price
 
   min_year:
-    type: float
+    type: text
     influence_conversation: true
     mappings:
       - type: from_entity
@@ -110,7 +111,7 @@ slots:
             requested_slot: min_year
 
   max_mileage:
-    type: float
+    type: text
     influence_conversation: true
     mappings:
       - type: from_entity
@@ -238,19 +239,19 @@ responses:
     - text: "Anytime!"
     - text: "Happy to help."
   utter_ask_body_type:
-    - text: "Which body type are you looking for? (Sedan, SUV, Hatchback, Coupe, Wagon...)"
+    - text: "Which body type are you looking for? (Sedan, SUV, Hatchback, Coupe, Wagon...) — or say 'any'."
   utter_ask_fuel:
-    - text: "What fuel type do you prefer? (Petrol, Diesel, Hybrid, Electric)"
+    - text: "What fuel type do you prefer? (Petrol, Diesel, Hybrid, Electric) — or say 'any'."
   utter_ask_max_price:
-    - text: "What’s your maximum budget (€)?"
+    - text: "What’s your maximum budget (€)? You can also say 'any'."
   utter_ask_min_year:
-    - text: "Minimum year of manufacture?"
+    - text: "Minimum year of manufacture? You can also say 'any'."
   utter_ask_max_mileage:
-    - text: "Maximum mileage (in km)?"
+    - text: "Maximum mileage (in km)? You can also say 'any'."
   utter_searching:
     - text: "Searching cars matching your filters..."
   utter_faq_hours:
-    - text: "We are open Mon–Fri 9am–6pm, Sat 10am–4pm."
+    - text: "We are open Mon–Fri 9am–5pm, Sat 10am–3pm."
   utter_faq_contact:
     - text: "Contact us: support@carstore.com, +1 555-123-456."
   utter_default:

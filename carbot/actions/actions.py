@@ -50,6 +50,10 @@ def _norm(s: Any) -> Optional[str]:
     s = str(s).strip()
     return s or None
 
+def _lcnorm(s: Any) -> str:
+    v = _norm(s)
+    return v.lower() if v is not None else ""
+
 def _fmt_eur(n: Any) -> str:
     try:
         i = int(float(n))
@@ -229,6 +233,15 @@ def _extract_free_query(text: str) -> Dict[str, Any]:
             max_price = min(prices)
     return {"body_type": body, "max_price": max_price, "min_year": min_year}
 
+ANY_TOKENS = {
+    "any","all","whatever","whichever","either",
+    "no preference","doesn't matter","does not matter",
+    "nothing specific","no specific","no particular",
+    "i don't care","i dont care","don't care","dont care",
+    "idc","anything"
+}
+SKIPPABLE = {"body_type","fuel","max_price","min_year","max_mileage"}
+
 class ValidateCarSearchForm(FormValidationAction):
     def name(self) -> Text:
         return "validate_car_search_form"
@@ -240,64 +253,49 @@ class ValidateCarSearchForm(FormValidationAction):
         tracker: Tracker,
         domain: Dict[Text, Any],
     ) -> List[Text]:
-        present = {s for s in slots_mapped_in_domain if tracker.get_slot(s)}
-        if present:
-            missing = [
-                s for s in ["body_type", "fuel", "max_price", "min_year", "max_mileage"]
-                if not tracker.get_slot(s)
-            ]
-            return missing[:2]
-        return slots_mapped_in_domain
-
-    def validate_fuel(self, value: Any, dispatcher, tracker, domain):
-        v = (_norm(value) or "").lower()
-        if _is_any(v):
-            dispatcher.utter_message(text="Okay, any fuel is fine.")
-            return {"fuel": None}
-        if v in ALLOWED_FUELS:
-            if v == "ev":
-                v = "electric"
-            return {"fuel": v.capitalize()}
-        dispatcher.utter_message(text="Please choose a fuel type: petrol, diesel, hybrid or electric.")
-        return {"fuel": None}
+        req = list(slots_mapped_in_domain)
+        rs = tracker.get_slot("requested_slot")
+        last = _lcnorm(tracker.latest_message.get("text"))
+        if rs in SKIPPABLE and last in ANY_TOKENS and rs in req:
+            req.remove(rs)
+        return req
 
     def validate_body_type(self, value: Any, dispatcher, tracker, domain):
-        v = (_norm(value) or "").lower()
-        if _is_any(v):
-            dispatcher.utter_message(text="Body type doesn’t matter.")
+        v = _lcnorm(value)
+        if v in ANY_TOKENS or _is_any(v):
             return {"body_type": None}
         if v in ALLOWED_BODIES:
             return {"body_type": v}
-        dispatcher.utter_message(text="Valid body types: sedan, SUV, hatchback, coupe, wagon, van, pickup…")
         return {"body_type": None}
 
-    def validate_origin(self, value: Any, dispatcher, tracker, domain):
-        v = _norm(value)
-        if _is_any(v):
-            dispatcher.utter_message(text="Origin doesn’t matter.")
-            return {"origin": None}
-        return {"origin": v}
+    def validate_fuel(self, value: Any, dispatcher, tracker, domain):
+        v = _lcnorm(value)
+        if v in ANY_TOKENS or _is_any(v):
+            return {"fuel": None}
+        if v in ALLOWED_FUELS:
+            return {"fuel": "electric" if v == "ev" else v}
+        return {"fuel": None}
 
     def validate_max_price(self, value: Any, dispatcher, tracker, domain):
+        v = _lcnorm(value)
+        if v in ANY_TOKENS or v == "":
+            return {"max_price": None}
         f = _to_float(value)
-        if f is not None and f > 100:
-            return {"max_price": f}
-        dispatcher.utter_message(text="Please provide a sensible budget, e.g. 15000.")
-        return {"max_price": None}
+        return {"max_price": f if (f is not None and f > 0) else None}
 
     def validate_min_year(self, value: Any, dispatcher, tracker, domain):
+        v = _lcnorm(value)
+        if v in ANY_TOKENS or v == "":
+            return {"min_year": None}
         y = _to_int(value)
-        if y and 1980 <= y <= 2030:
-            return {"min_year": y}
-        dispatcher.utter_message(text="Please enter a year between 1980 and 2030.")
-        return {"min_year": None}
+        return {"min_year": y if (y and 1980 <= y <= 2035) else None}
 
     def validate_max_mileage(self, value: Any, dispatcher, tracker, domain):
+        v = _lcnorm(value)
+        if v in ANY_TOKENS or v == "":
+            return {"max_mileage": None}
         m = _to_int(value)
-        if m and 1000 <= m <= 500000:
-            return {"max_mileage": m}
-        dispatcher.utter_message(text="Mileage should be between 1,000 and 500,000 km.")
-        return {"max_mileage": None}
+        return {"max_mileage": m if (m and 0 < m <= 500000) else None}
 
 class ValidateCheckoutForm(FormValidationAction):
     def name(self) -> Text:
@@ -307,7 +305,6 @@ class ValidateCheckoutForm(FormValidationAction):
         v = _norm(value)
         if v and len(v) >= 2:
             return {"full_name": v}
-        dispatcher.utter_message(text="Please tell me your full name (at least 2 characters).")
         return {"full_name": None}
 
     def validate_phone(self, value: Any, dispatcher, tracker, domain):
@@ -316,7 +313,6 @@ class ValidateCheckoutForm(FormValidationAction):
             return {"phone": None}
         if re.fullmatch(r"[+\d][\d ()\-]{5,}", v):
             return {"phone": v}
-        dispatcher.utter_message(text="Please provide a valid phone number (e.g. +381 64 123 456).")
         return {"phone": None}
 
     def validate_address(self, value: Any, dispatcher, tracker, domain):
@@ -325,7 +321,6 @@ class ValidateCheckoutForm(FormValidationAction):
             return {"address": None}
         if len(v) >= 5:
             return {"address": v}
-        dispatcher.utter_message(text="Please provide a longer address (at least 5 characters).")
         return {"address": None}
 
 class ActionSearchCar(Action):
