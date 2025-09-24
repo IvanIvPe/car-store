@@ -19,7 +19,6 @@ rules:
     steps:
       - action: car_search_form
       - active_loop: null
-      - action: utter_searching
       - action: action_search_car
 
   - rule: Body type given → continue car_search_form
@@ -61,7 +60,6 @@ rules:
   - rule: Quick search by make/model (no form)
     steps:
       - intent: quick_search_by_make_model
-      - action: utter_searching
       - action: action_search_car
 
   - rule: Show cart

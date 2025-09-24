@@ -88,38 +88,46 @@ slots:
       - type: from_entity
         entity: origin
 
+  # ------- NUMERIČKI SLOTOVI: samo from_text u formi + from_entity VAN forme -------
   max_price:
     type: text
     influence_conversation: true
     mappings:
-      - type: from_entity
-        entity: max_price
       - type: from_text
         conditions:
           - active_loop: car_search_form
             requested_slot: max_price
+      - type: from_entity
+        entity: max_price
+        conditions:
+          - active_loop: null
 
   min_year:
     type: text
     influence_conversation: true
     mappings:
-      - type: from_entity
-        entity: min_year
       - type: from_text
         conditions:
           - active_loop: car_search_form
             requested_slot: min_year
+      - type: from_entity
+        entity: min_year
+        conditions:
+          - active_loop: null
 
   max_mileage:
     type: text
     influence_conversation: true
     mappings:
-      - type: from_entity
-        entity: max_mileage
       - type: from_text
         conditions:
           - active_loop: car_search_form
             requested_slot: max_mileage
+      - type: from_entity
+        entity: max_mileage
+        conditions:
+          - active_loop: null
+  # -------------------------------------------------------------------------------
 
   color:
     type: text

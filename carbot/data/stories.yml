@@ -9,7 +9,6 @@ stories:
     - action: car_search_form
     - active_loop: car_search_form
     - active_loop: null
-    - action: utter_searching
     - action: action_search_car
 
 
@@ -23,7 +22,6 @@ stories:
     - action: car_search_form
     - active_loop: car_search_form
     - active_loop: null
-    - action: utter_searching
     - action: action_search_car
 
 
@@ -38,7 +36,6 @@ stories:
     - action: car_search_form
     - active_loop: car_search_form
     - active_loop: null
-    - action: utter_searching
     - action: action_search_car
 
 - story: Reserve by car_id

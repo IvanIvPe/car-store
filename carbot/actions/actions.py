@@ -234,68 +234,65 @@ def _extract_free_query(text: str) -> Dict[str, Any]:
     return {"body_type": body, "max_price": max_price, "min_year": min_year}
 
 ANY_TOKENS = {
-    "any","all","whatever","whichever","either",
-    "no preference","doesn't matter","does not matter",
-    "nothing specific","no specific","no particular",
-    "i don't care","i dont care","don't care","dont care",
-    "idc","anything"
+    "any", "all", "whatever", "whichever", "either",
+    "no preference", "doesn't matter", "does not matter",
+    "nothing specific", "no specific", "no particular",
+    "i don't care", "i dont care", "don't care", "dont care",
+    "idc", "anything", "none", "n/a", "na",
 }
-SKIPPABLE = {"body_type","fuel","max_price","min_year","max_mileage"}
+
+SKIPPABLE_SLOTS = {"body_type", "fuel", "max_price", "min_year", "max_mileage"}
+
+
+def _is_any_text(v: Any) -> bool:
+    return str(v).strip().lower() in ANY_TOKENS
+
 
 class ValidateCarSearchForm(FormValidationAction):
     def name(self) -> Text:
         return "validate_car_search_form"
 
     async def required_slots(
-        self,
-        slots_mapped_in_domain: List[Text],
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: Dict[Text, Any],
+        self, slots_mapped_in_domain, dispatcher, tracker, domain
     ) -> List[Text]:
-        req = list(slots_mapped_in_domain)
+        last_text = (tracker.latest_message.get("text") or "").strip().lower()
         rs = tracker.get_slot("requested_slot")
-        last = _lcnorm(tracker.latest_message.get("text"))
-        if rs in SKIPPABLE and last in ANY_TOKENS and rs in req:
-            req.remove(rs)
-        return req
+        if rs in SKIPPABLE_SLOTS and last_text in ANY_TOKENS:
+            return [s for s in slots_mapped_in_domain if s != rs]
+        return list(slots_mapped_in_domain)
 
-    def validate_body_type(self, value: Any, dispatcher, tracker, domain):
-        v = _lcnorm(value)
-        if v in ANY_TOKENS or _is_any(v):
-            return {"body_type": None}
-        if v in ALLOWED_BODIES:
-            return {"body_type": v}
-        return {"body_type": None}
+    def validate_body_type(self, value, dispatcher, tracker, domain):
+        return {"body_type": None if _is_any_text(value) else (str(value).strip().lower() or None)}
 
-    def validate_fuel(self, value: Any, dispatcher, tracker, domain):
-        v = _lcnorm(value)
-        if v in ANY_TOKENS or _is_any(v):
+    def validate_fuel(self, value, dispatcher, tracker, domain):
+        if _is_any_text(value):
             return {"fuel": None}
-        if v in ALLOWED_FUELS:
-            return {"fuel": "electric" if v == "ev" else v}
-        return {"fuel": None}
+        v = str(value).strip().lower()
+        if v == "gasoline": v = "petrol"
+        if v == "ev": v = "electric"
+        return {"fuel": v or None}
 
-    def validate_max_price(self, value: Any, dispatcher, tracker, domain):
-        v = _lcnorm(value)
-        if v in ANY_TOKENS or v == "":
+
+    def validate_max_price(self, value, dispatcher, tracker, domain):
+        if _is_any_text(value) or str(value).strip() == "":
             return {"max_price": None}
         f = _to_float(value)
         return {"max_price": f if (f is not None and f > 0) else None}
 
-    def validate_min_year(self, value: Any, dispatcher, tracker, domain):
-        v = _lcnorm(value)
-        if v in ANY_TOKENS or v == "":
+    def validate_min_year(self, value, dispatcher, tracker, domain):
+        if _is_any_text(value) or str(value).strip() == "":
             return {"min_year": None}
         y = _to_int(value)
-        return {"min_year": y if (y and 1980 <= y <= 2035) else None}
+        return {"min_year": y if (y and 1900 <= y <= 2100) else None}
 
-    def validate_max_mileage(self, value: Any, dispatcher, tracker, domain):
-        v = _lcnorm(value)
-        if v in ANY_TOKENS or v == "":
+    def validate_max_mileage(self, value, dispatcher, tracker, domain):
+        if _is_any_text(value) or str(value).strip() == "":
             return {"max_mileage": None}
         m = _to_int(value)
-        return {"max_mileage": m if (m and 0 < m <= 500000) else None}
+        return {"max_mileage": m if (m and m > 0) else None}
+
+
+
 
 class ValidateCheckoutForm(FormValidationAction):
     def name(self) -> Text:
@@ -337,6 +334,10 @@ class ActionSearchCar(Action):
         make        = _norm(tracker.get_slot("make"))
         model       = _norm(tracker.get_slot("model"))
 
+        if not any([body_type, fuel, origin, max_price, min_year, max_mileage, make, model]):
+            dispatcher.utter_message(text="Let's refine your search first.")
+            return []
+        
         params: Dict[str, Any] = {"sortBy": "yearDesc", "pageIndex": 0, "pageSize": 20}
         if body_type:   params["bodyType"]   = body_type
         if fuel:        params["fuel"]       = fuel
@@ -351,7 +352,7 @@ class ActionSearchCar(Action):
         data = _api_get("/cars/search", params) if API_BASE else None
 
         cars: List[Dict[str, Any]] = []
-        if isinstance(data, dict) and "items" in data and isinstance(data["items"], list):
+        if isinstance(data, dict) and isinstance(data.get("items"), list):
             cars = data["items"]
         elif isinstance(data, list):
             cars = data
@@ -385,6 +386,8 @@ class ActionSearchCar(Action):
         for car in cars[:3]:
             dispatcher.utter_message(text=_car_card_html(car), html=True)
         return []
+
+
 
 class ActionReserveCar(Action):
     def name(self) -> Text:
