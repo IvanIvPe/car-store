@@ -88,7 +88,6 @@ slots:
       - type: from_entity
         entity: origin
 
-  # ------- NUMERIČKI SLOTOVI: samo from_text u formi + from_entity VAN forme -------
   max_price:
     type: text
     influence_conversation: true
@@ -127,7 +126,7 @@ slots:
         entity: max_mileage
         conditions:
           - active_loop: null
-  # -------------------------------------------------------------------------------
+
 
   color:
     type: text
