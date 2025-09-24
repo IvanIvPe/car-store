@@ -314,9 +314,7 @@ class ValidateCheckoutForm(FormValidationAction):
 
     def validate_address(self, value: Any, dispatcher, tracker, domain):
         v = _norm(value)
-        if not v:
-            return {"address": None}
-        if len(v) >= 5:
+        if v and len(v) >= 5:
             return {"address": v}
         return {"address": None}
 
